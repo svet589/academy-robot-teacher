@@ -1,0 +1,235 @@
+/* ==================== МОДУЛЬ ПИТОМЦА ==================== */
+
+.pet-module-container {
+    position: relative;
+    min-height: 600px;
+}
+
+/* Питомец на главной */
+.home-pet-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.home-pet-emoji {
+    font-size: 5rem;
+    transition: transform 0.2s;
+}
+
+.home-pet-widget:hover .home-pet-emoji {
+    transform: scale(1.1);
+}
+
+.home-pet-bubble {
+    position: absolute;
+    top: -70px;
+    right: -30px;
+    background: white;
+    border-radius: 20px 20px 20px 5px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    white-space: nowrap;
+    border: 3px solid var(--border);
+    display: none;
+}
+
+.home-pet-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    right: 20px;
+    border-width: 12px 12px 0 0;
+    border-style: solid;
+    border-color: var(--border) transparent;
+}
+
+.home-pet-name {
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.pet-status-mini {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.status-icon {
+    font-size: 1.2rem;
+}
+
+/* Комнаты питомца */
+.pet-room {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+.room-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: background 0.5s;
+}
+
+.room-bedroom .room-background {
+    background: linear-gradient(180deg, #D4A574 0%, #C19A6B 50%, #A0522D 100%);
+}
+
+.room-kitchen .room-background {
+    background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 50%, #F5DEB3 100%);
+}
+
+.room-living .room-background {
+    background: linear-gradient(180deg, #F5DEB3 0%, #DEB887 50%, #D2B48C 100%);
+}
+
+.room-street .room-background {
+    background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 60%, #90EE90 60%, #228B22 100%);
+}
+
+/* Питомец в комнате */
+.pet-character {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 20;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+    animation: breathe 3s ease-in-out infinite;
+}
+
+.pet-character.sleeping {
+    filter: grayscale(0.4) drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+}
+
+/* Аксессуары */
+.pet-base { position: relative; z-index: 1; }
+
+.pet-hat {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.pet-type-cat .pet-hat { top: -0.35em; font-size: 0.5em; }
+.pet-type-dog .pet-hat { top: -0.3em; font-size: 0.55em; }
+.pet-type-rabbit .pet-hat { top: -0.2em; left: 48%; font-size: 0.5em; }
+.pet-type-fox .pet-hat { top: -0.25em; font-size: 0.55em; }
+.pet-type-koala .pet-hat { top: -0.2em; font-size: 0.55em; }
+.pet-type-pig .pet-hat { top: -0.3em; font-size: 0.5em; }
+
+.pet-glasses {
+    position: absolute;
+    top: 0.35em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65em;
+    z-index: 4;
+}
+
+.pet-scarf {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5em;
+    z-index: 3;
+}
+
+.pet-bow {
+    position: absolute;
+    font-size: 0.55em;
+    z-index: 4;
+}
+
+.pet-type-cat .pet-bow { top: 0.1em; right: -0.3em; }
+.pet-type-dog .pet-bow { top: 0.2em; right: -0.35em; }
+.pet-type-rabbit .pet-bow { top: -0.05em; right: -0.2em; }
+
+/* Тарелки */
+.plates-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.plate {
+    width: 65px;
+    height: 65px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #d4a259;
+    box-shadow: 0 4px 0 #b47c2e;
+    cursor: grab;
+}
+
+.plate-emoji { font-size: 2rem; }
+
+.plate-quantity {
+    background: #ffb347;
+    border-radius: 20px;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-top: -5px;
+}
+
+/* Индикаторы на вкладках */
+.pet-tabs {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: rgba(255,255,255,0.95);
+    border-top: 3px solid var(--border);
+}
+
+.pet-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.pet-tab.active {
+    background: #ffe0b0;
+}
+
+.pet-tab-icon { font-size: 1.5rem; }
+.pet-tab-label { font-size: 0.7rem; font-weight: bold; }
+
+.pet-tab-indicator {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    background: #eee;
+    margin-top: 2px;
+    border: 2px solid #d4a259;
+}
+
+.pet-tab-indicator.pulse {
+    animation: pulseWarning 1s infinite;
+  }
