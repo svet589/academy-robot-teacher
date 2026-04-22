@@ -1,0 +1,134 @@
+/* ==================== АНИМАЦИИ ==================== */
+
+/* Пульсация */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+/* Плавное появление */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Покачивание */
+@keyframes sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+.sway {
+    animation: sway 3s ease-in-out infinite;
+}
+
+/* Плавание */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.float {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* Вращение */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+/* Блеск */
+@keyframes shine {
+    0% { box-shadow: 0 0 5px gold; }
+    50% { box-shadow: 0 0 20px gold, 0 0 30px orange; }
+    100% { box-shadow: 0 0 5px gold; }
+}
+
+.shine {
+    animation: shine 2s ease-in-out infinite;
+}
+
+/* Тряска */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Прыжок */
+@keyframes jump {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.jump {
+    animation: jump 0.5s ease;
+}
+
+/* Облака */
+@keyframes floatCloud {
+    0% { left: -100px; opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { left: 110%; opacity: 0; }
+}
+
+/* Солнце */
+@keyframes sunFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Дерево */
+@keyframes treeSway {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(2.5deg); }
+}
+
+/* Zzz анимация */
+@keyframes zzzFloat {
+    0% { top: -30px; right: -40px; opacity: 0.3; }
+    50% { top: -55px; right: -50px; opacity: 1; }
+    100% { top: -30px; right: -40px; opacity: 0.3; }
+}
+
+/* Дыхание */
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* Пульсация предупреждения */
+@keyframes pulseWarning {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+    50% { box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.5); }
+}
+
+/* Появление цели */
+@keyframes targetPop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Сундук */
+@keyframes chestGlow {
+    0%, 100% { filter: drop-shadow(0 6px 8px rgba(0,0,0,0.2)); }
+    50% { filter: drop-shadow(0 6px 20px rgba(255,215,0,0.7)); }
+}
