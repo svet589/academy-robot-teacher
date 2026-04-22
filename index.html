@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎓 Академия Робота-Учителя</title>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/pet-module.css">
+    <link rel="stylesheet" href="assets/css/life-map.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <!-- Основной контейнер приложения -->
+    <div id="app">
+        <!-- Содержимое будет рендериться через JavaScript -->
+        <div class="loading-screen">
+            <div class="loading-spinner">🤖</div>
+            <p>Загрузка Академии...</p>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Контейнер для модальных окон -->
+    <div id="modal-container" class="modal-container"></div>
+
+    <!-- Основные модули -->
+    <script type="module" src="assets/js/core/state.js"></script>
+    <script type="module" src="assets/js/core/storage.js"></script>
+    <script type="module" src="assets/js/core/router.js"></script>
+    <script type="module" src="assets/js/core/ui.js"></script>
+    <script type="module" src="assets/js/core/notifications.js"></script>
+    
+    <!-- Модули игры -->
+    <script type="module" src="assets/js/modules/pet-module.js"></script>
+    <script type="module" src="assets/js/modules/math-map.js"></script>
+    <script type="module" src="assets/js/modules/russian-map.js"></script>
+    <script type="module" src="assets/js/modules/english-map.js"></script>
+    <script type="module" src="assets/js/modules/world-map.js"></script>
+    
+    <!-- Игры -->
+    <script type="module" src="assets/js/games/basketball.js"></script>
+    <script type="module" src="assets/js/games/catch.js"></script>
+    <script type="module" src="assets/js/games/find.js"></script>
+    <script type="module" src="assets/js/games/racing.js"></script>
+    <script type="module" src="assets/js/games/arcade.js"></script>
+    <script type="module" src="assets/js/games/shooting.js"></script>
+    <script type="module" src="assets/js/games/dino.js"></script>
+    
+    <!-- Точка входа -->
+    <script type="module">
+        import { initApp } from './assets/js/core/router.js';
+        
+        // Инициализация приложения после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+    </script>
+</body>
+  </html>
