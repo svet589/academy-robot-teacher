@@ -1,0 +1,133 @@
+/* ==================== ТЁМНАЯ ТЕМА ==================== */
+body.theme-dark {
+    --bg-start: #1e1e2f;
+    --bg-end: #1a1a2e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #ffd966;
+    --card-bg: #2a2a3e;
+    --border: #5a4a7a;
+    --primary: #5a4a7a;
+    --primary-dark: #3a2a5e;
+    background: radial-gradient(circle at 20% 20%, var(--bg-start), var(--bg-end));
+}
+
+body.theme-dark .card {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 6px #3a3a5e inset;
+    border-color: #5a4a7a;
+}
+
+body.theme-dark .subject-card {
+    background: #3a3a4e;
+    border-color: #6a5a8a;
+    box-shadow: 0 8px 0 #4a3a6e;
+}
+
+body.theme-dark .coins-display {
+    background: #4a4a5e;
+    color: #e0e0e0;
+}
+
+body.theme-dark .robot-message {
+    background: #3a3a4e;
+    color: #e0e0e0;
+}
+
+body.theme-dark button {
+    background: #5a4a7a;
+    color: #e0e0e0;
+    box-shadow: 0 5px 0 #3a2a5e;
+}
+
+body.theme-dark .topic-card {
+    background: #4a4a5e;
+    border-color: #6a5a8a;
+}
+
+body.theme-dark .topic-card.completed {
+    background: #2a4a2e;
+    border-color: #4caf50;
+}
+
+body.theme-dark .story-box {
+    background: #3a3a4e;
+    color: #e0e0e0;
+}
+
+body.theme-dark .rule-box {
+    background: #2a4a2e;
+    color: #e0e0e0;
+}
+
+body.theme-dark .task-card {
+    background: #3a3a4e;
+}
+
+body.theme-dark .modal-content {
+    background: #3a3a4e;
+    border-color: #5a4a7a;
+    color: #e0e0e0;
+}
+
+body.theme-dark input {
+    background: #4a4a5e;
+    color: #e0e0e0;
+    border-color: #6a5a8a;
+}
+
+body.theme-dark .shop-item {
+    background: #4a4a5e;
+    border-color: #6a5a8a;
+}
+
+body.theme-dark .game-card {
+    background: #3a3a4e;
+    border-color: #6a5a8a;
+}
+
+/* ==================== ЛЕСНАЯ ТЕМА ==================== */
+body.theme-forest {
+    --bg-start: #a5d6a5;
+    --bg-end: #2e7d32;
+    --text-primary: #1a3a1a;
+    --text-secondary: #2e7d32;
+    --card-bg: rgba(230, 245, 220, 0.95);
+    --border: #3c8d3c;
+    --primary: #4caf50;
+    --primary-dark: #2e7d32;
+    background: radial-gradient(circle at 20% 20%, var(--bg-start), var(--bg-end));
+}
+
+body.theme-forest .card {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2), 0 0 0 6px #a5d6a5 inset;
+    border-color: #3c8d3c;
+}
+
+body.theme-forest button {
+    background: #4caf50;
+    color: white;
+    box-shadow: 0 5px 0 #2e7d32;
+}
+
+/* ==================== МОРСКАЯ ТЕМА ==================== */
+body.theme-ocean {
+    --bg-start: #2b7a9c;
+    --bg-end: #0f4c5c;
+    --text-primary: #ffffff;
+    --text-secondary: #81d4fa;
+    --card-bg: rgba(200, 230, 250, 0.9);
+    --border: #1e88e5;
+    --primary: #1e88e5;
+    --primary-dark: #1565c0;
+    background: linear-gradient(145deg, var(--bg-start), var(--bg-end));
+}
+
+body.theme-ocean .card {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 6px #64b5f6 inset;
+    border-color: #1e88e5;
+}
+
+body.theme-ocean button {
+    background: #1e88e5;
+    color: white;
+    box-shadow: 0 5px 0 #1565c0;
+                                }
