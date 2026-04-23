@@ -1,0 +1,40 @@
+{
+  "classes": [
+    {
+      "id": "grade1_rus", "name": "📘 1 класс", "topics": [
+        { "id": "r1_1", "name": "Алфавит", "type": "alphabet" },
+        { "id": "r1_2", "name": "Гласные и согласные", "type": "vowels" },
+        { "id": "r1_3", "name": "Слоги и ударение", "type": "syllables" },
+        { "id": "r1_4", "name": "ЖИ-ШИ, ЧА-ЩА, ЧУ-ЩУ", "type": "spellingRules" },
+        { "id": "r1_5", "name": "Заглавная буква", "type": "capitalLetter" }
+      ]
+    },
+    {
+      "id": "grade2_rus", "name": "📗 2 класс", "topics": [
+        { "id": "r2_1", "name": "Части речи", "type": "partsOfSpeech" },
+        { "id": "r2_2", "name": "Синонимы и антонимы", "type": "synonymsAntonyms" },
+        { "id": "r2_3", "name": "Состав слова (корень)", "type": "wordComposition" },
+        { "id": "r2_4", "name": "Безударные гласные", "type": "unstressedVowels" },
+        { "id": "r2_5", "name": "Парные согласные", "type": "pairedConsonants" }
+      ]
+    },
+    {
+      "id": "grade3_rus", "name": "📙 3 класс", "topics": [
+        { "id": "r3_1", "name": "Падежи существительных", "type": "cases" },
+        { "id": "r3_2", "name": "Время глагола", "type": "verbTense" },
+        { "id": "r3_3", "name": "Приставка и суффикс", "type": "prefixSuffix" },
+        { "id": "r3_4", "name": "Разделительный Ъ и Ь", "type": "separatingSigns" }
+      ]
+    },
+    {
+      "id": "grade4_rus", "name": "📕 4 класс", "topics": [
+        { "id": "r4_1", "name": "Склонения", "type": "declensions" },
+        { "id": "r4_2", "name": "Спряжения глаголов", "type": "conjugations" },
+        { "id": "r4_3", "name": "Однородные члены", "type": "homogeneous" },
+        { "id": "r4_4", "name": "Сложное предложение", "type": "complexSentence" },
+        { "id": "r4_5", "name": "Местоимения", "type": "pronouns" },
+        { "id": "r4_6", "name": "Наречия", "type": "adverbs" }
+      ]
+    }
+  ]
+    }
