@@ -1,0 +1,37 @@
+{
+  "classes": [
+    {
+      "id": "grade1_world", "name": "🌍 1 класс", "topics": [
+        { "id": "w1_1", "name": "Времена года", "type": "seasons" },
+        { "id": "w1_2", "name": "Дни недели", "type": "daysAndTime" },
+        { "id": "w1_3", "name": "Дикие и домашние животные", "type": "animals" },
+        { "id": "w1_4", "name": "Что нас окружает", "type": "environment" }
+      ]
+    },
+    {
+      "id": "grade2_world", "name": "🌍 2 класс", "topics": [
+        { "id": "w2_1", "name": "Красная книга", "type": "redBook" },
+        { "id": "w2_2", "name": "Профессии", "type": "professions" },
+        { "id": "w2_3", "name": "Транспорт", "type": "transport" },
+        { "id": "w2_4", "name": "Правила безопасности", "type": "safety" },
+        { "id": "w2_5", "name": "Ориентирование", "type": "orientation" }
+      ]
+    },
+    {
+      "id": "grade3_world", "name": "🌍 3 класс", "topics": [
+        { "id": "w3_1", "name": "Тело человека", "type": "humanBody" },
+        { "id": "w3_2", "name": "Круговорот воды", "type": "waterCycle" },
+        { "id": "w3_3", "name": "Полезные ископаемые", "type": "minerals" },
+        { "id": "w3_4", "name": "Страны мира", "type": "countries" }
+      ]
+    },
+    {
+      "id": "grade4_world", "name": "🌍 4 класс", "topics": [
+        { "id": "w4_1", "name": "Солнечная система", "type": "solarSystem" },
+        { "id": "w4_2", "name": "Природные зоны России", "type": "naturalZones" },
+        { "id": "w4_3", "name": "История России", "type": "history" },
+        { "id": "w4_4", "name": "Экология", "type": "ecology" }
+      ]
+    }
+  ]
+}
