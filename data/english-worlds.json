@@ -1,0 +1,12 @@
+{
+  "worlds": [
+    { "id": "alphabet", "name": "🔤 Алфавит и чтение", "icon": "🔤", "subject": "english", "type": "alphabet", "description": "ABC, буквы и звуки!" },
+    { "id": "animals", "name": "🐾 Животные", "icon": "🐾", "subject": "english", "type": "animals", "description": "Cat, dog, bird и другие!" },
+    { "id": "home", "name": "🏠 Дом и семья", "icon": "🏠", "subject": "english", "type": "home", "description": "Mother, father, house, room!" },
+    { "id": "food", "name": "🍎 Еда", "icon": "🍎", "subject": "english", "type": "food", "description": "Apple, bread, milk, cheese!" },
+    { "id": "clothes", "name": "👕 Одежда и цвета", "icon": "👕", "subject": "english", "type": "clothes", "description": "Red dress, blue jeans!" },
+    { "id": "verbs", "name": "⚡ Глаголы", "icon": "⚡", "subject": "english", "type": "verbs", "description": "Play, read, write, run!" },
+    { "id": "school", "name": "📚 Школа", "icon": "📚", "subject": "english", "type": "school", "description": "Book, pen, teacher, student!" },
+    { "id": "marathon", "name": "🏁 Марафон", "icon": "🏁", "subject": "english", "type": "mixed", "description": "Все темы вперемешку!" }
+  ]
+}
