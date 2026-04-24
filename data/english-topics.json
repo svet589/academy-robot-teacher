@@ -1,0 +1,20 @@
+{
+  "classes": [
+    {
+      "id": "grade2_eng", "name": "🇬🇧 2 класс", "topics": [
+        { "id": "e2_1", "name": "Алфавит (ABC)", "type": "alphabet", "story": "26 букв!", "rule": "A, B, C, D, E..." },
+        { "id": "e2_2", "name": "Цифры 1-10", "type": "numbers", "maxNum": 10, "story": "Считаем!", "rule": "One, two, three..." },
+        { "id": "e2_3", "name": "Цвета", "type": "vocabulary", "category": "colors", "story": "Red, blue, green!", "rule": "What colour is it?" },
+        { "id": "e2_4", "name": "Животные", "type": "vocabulary", "category": "animals", "story": "Cat, dog, bird!", "rule": "What's this? — It's a cat." }
+      ]
+    },
+    {
+      "id": "grade3_eng", "name": "🇬🇧 3 класс", "topics": [
+        { "id": "e3_1", "name": "Школа", "type": "vocabulary", "category": "school", "story": "Book, pen!", "rule": "I have a pen." },
+        { "id": "e3_2", "name": "Еда", "type": "vocabulary", "category": "food", "story": "Apple, bread!", "rule": "I like apples." },
+        { "id": "e3_3", "name": "Present Simple", "type": "presentSimple", "story": "Действия каждый день!", "rule": "He plays. I play." },
+        { "id": "e3_4", "name": "Множественное число", "type": "plural", "story": "Один — много!", "rule": "Cat → Cats, Box → Boxes" }
+      ]
+    }
+  ]
+}
