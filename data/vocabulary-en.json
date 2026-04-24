@@ -1,0 +1,37 @@
+{
+  "animals": [
+    { "en": "CAT", "ru": "Кошка" }, { "en": "DOG", "ru": "Собака" },
+    { "en": "BIRD", "ru": "Птица" }, { "en": "FISH", "ru": "Рыба" },
+    { "en": "RABBIT", "ru": "Кролик" }, { "en": "HORSE", "ru": "Лошадь" },
+    { "en": "COW", "ru": "Корова" }, { "en": "PIG", "ru": "Свинья" },
+    { "en": "LION", "ru": "Лев" }, { "en": "TIGER", "ru": "Тигр" },
+    { "en": "BEAR", "ru": "Медведь" }, { "en": "FOX", "ru": "Лиса" }
+  ],
+  "colors": [
+    { "en": "RED", "ru": "Красный" }, { "en": "BLUE", "ru": "Синий" },
+    { "en": "GREEN", "ru": "Зелёный" }, { "en": "YELLOW", "ru": "Жёлтый" },
+    { "en": "BLACK", "ru": "Чёрный" }, { "en": "WHITE", "ru": "Белый" },
+    { "en": "ORANGE", "ru": "Оранжевый" }, { "en": "PINK", "ru": "Розовый" }
+  ],
+  "family": [
+    { "en": "MOTHER", "ru": "Мама" }, { "en": "FATHER", "ru": "Папа" },
+    { "en": "SISTER", "ru": "Сестра" }, { "en": "BROTHER", "ru": "Брат" }
+  ],
+  "food": [
+    { "en": "APPLE", "ru": "Яблоко" }, { "en": "BANANA", "ru": "Банан" },
+    { "en": "BREAD", "ru": "Хлеб" }, { "en": "MILK", "ru": "Молоко" },
+    { "en": "CHEESE", "ru": "Сыр" }, { "en": "EGG", "ru": "Яйцо" }
+  ],
+  "school": [
+    { "en": "BOOK", "ru": "Книга" }, { "en": "PEN", "ru": "Ручка" },
+    { "en": "PENCIL", "ru": "Карандаш" }, { "en": "TEACHER", "ru": "Учитель" }
+  ],
+  "verbs": [
+    { "base": "PLAY", "third": "PLAYS", "ing": "PLAYING", "past": "PLAYED", "ru": "Играть" },
+    { "base": "READ", "third": "READS", "ing": "READING", "past": "READ", "ru": "Читать" },
+    { "base": "WRITE", "third": "WRITES", "ing": "WRITING", "past": "WROTE", "ru": "Писать" },
+    { "base": "RUN", "third": "RUNS", "ing": "RUNNING", "past": "RAN", "ru": "Бегать" },
+    { "base": "EAT", "third": "EATS", "ing": "EATING", "past": "ATE", "ru": "Есть" },
+    { "base": "GO", "third": "GOES", "ing": "GOING", "past": "WENT", "ru": "Идти" }
+  ]
+}
