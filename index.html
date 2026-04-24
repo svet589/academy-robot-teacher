@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎓 Академия Робота-Учителя</title>
+    
+    <!-- Единый файл стилей -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <!-- Основной контейнер -->
+    <div id="app"></div>
+    
+    <!-- Уведомления -->
+    <div id="notification-container" class="notification-container"></div>
+    
+    <!-- Модальные окна -->
+    <div id="modal-container" class="modal-container"></div>
+
+    <!-- ВСЕ скрипты загружаются статически (полный офлайн) -->
+    <script src="assets/js/state.js"></script>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/sounds.js"></script>
+    <script src="assets/js/achievements.js"></script>
+    <script src="assets/js/daily.js"></script>
+    <script src="assets/js/task-generator.js"></script>
+    
+    <!-- Данные (встроенные, без fetch) -->
+    <script src="assets/js/data/math-worlds.js"></script>
+    <script src="assets/js/data/russian-worlds.js"></script>
+    <script src="assets/js/data/english-worlds.js"></script>
+    <script src="assets/js/data/world-worlds.js"></script>
+    <script src="assets/js/data/math-topics.js"></script>
+    <script src="assets/js/data/russian-topics.js"></script>
+    <script src="assets/js/data/english-topics.js"></script>
+    <script src="assets/js/data/world-topics.js"></script>
+    <script src="assets/js/data/vocabulary-en.js"></script>
+    <script src="assets/js/data/world-facts.js"></script>
+    
+    <!-- Модули -->
+    <script src="assets/js/pet-module.js"></script>
+    <script src="assets/js/shop.js"></script>
+    <script src="assets/js/encyclopedia.js"></script>
+    <script src="assets/js/parent-control.js"></script>
+    
+    <!-- Игры -->
+    <script src="assets/js/games/maze.js"></script>
+    <script src="assets/js/games/word.js"></script>
+    <script src="assets/js/games/checkers.js"></script>
+    <script src="assets/js/games/tic-tac.js"></script>
+    <script src="assets/js/games/memory.js"></script>
+    <script src="assets/js/games/battleship.js"></script>
+    <script src="assets/js/games/sudoku.js"></script>
+    <script src="assets/js/games/shoot-game.js"></script>
+    <script src="assets/js/games/compare-fast.js"></script>
+    <script src="assets/js/games/finger-count.js"></script>
+    <script src="assets/js/games/number-composition.js"></script>
+    <script src="assets/js/games/clock-game.js"></script>
+    <script src="assets/js/games/change-game.js"></script>
+    <script src="assets/js/games/pet/basketball.js"></script>
+    <script src="assets/js/games/pet/catch.js"></script>
+    <script src="assets/js/games/pet/find.js"></script>
+    <script src="assets/js/games/pet/racing.js"></script>
+    <script src="assets/js/games/pet/arcade-game.js"></script>
+    <script src="assets/js/games/pet/shooting.js"></script>
+    
+    <!-- Роутер и UI (загружаются последними) -->
+    <script src="assets/js/router.js"></script>
+    <script src="assets/js/ui.js"></script>
+</body>
+  </html>
