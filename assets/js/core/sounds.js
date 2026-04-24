@@ -20,6 +20,7 @@ export function initSounds() {
     EventBus.on('sound:coin', () => playSound('coin'));
     EventBus.on('sound:achievement', () => playSound('achievement'));
     EventBus.on('sound:click', () => playSound('click'));
+    EventBus.on('sound:gameover', () => playSound('gameover'));
 }
 
 export function playSound(type) {
@@ -38,7 +39,8 @@ export function playSound(type) {
             wrong: [220, 0.3],
             coin: [1200, 0.1],
             achievement: [1500, 0.4],
-            click: [600, 0.05]
+            click: [600, 0.05],
+            gameover: [150, 0.5]
         };
         
         const [freq, duration] = sounds[type] || [440, 0.1];
@@ -56,10 +58,11 @@ export function speak(text) {
     if (!window.speechSynthesis) return;
     
     try {
+        speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = 'ru-RU';
         utter.rate = 0.9;
-        speechSynthesis.cancel();
+        utter.pitch = 1.1;
         speechSynthesis.speak(utter);
     } catch (e) {}
-      }
+}
