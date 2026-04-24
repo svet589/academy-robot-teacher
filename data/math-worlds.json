@@ -1,0 +1,12 @@
+{
+  "worlds": [
+    { "id": "addition", "name": "🌳 Лес сложения", "icon": "🌳", "subject": "math", "type": "addition", "description": "Учимся складывать числа!" },
+    { "id": "subtraction", "name": "🏜️ Пустыня вычитания", "icon": "🏜️", "subject": "math", "type": "subtraction", "description": "Учимся вычитать числа!" },
+    { "id": "multiplication", "name": "🌊 Океан умножения", "icon": "🌊", "subject": "math", "type": "multiplication", "description": "Учим таблицу умножения!" },
+    { "id": "division", "name": "🚀 Космос деления", "icon": "🚀", "subject": "math", "type": "division", "description": "Учимся делить числа!" },
+    { "id": "compare", "name": "⚖️ Сравнение", "icon": "⚖️", "subject": "math", "type": "compare", "description": "Учимся сравнивать числа!" },
+    { "id": "logic", "name": "🧩 Логика", "icon": "🧩", "subject": "math", "type": "logic", "description": "Решаем логические задачи!" },
+    { "id": "measurement", "name": "📏 Измерения", "icon": "📏", "subject": "math", "type": "measurement", "description": "Измеряем длину, площадь, объём!" },
+    { "id": "marathon", "name": "🏁 Марафон", "icon": "🏁", "subject": "math", "type": "mixed", "description": "Все темы вперемешку!" }
+  ]
+}
