@@ -342,4 +342,75 @@ function buyShield() {
     } else {
         if (typeof showNotification === 'function') showNotification('❌ Не хватает монет!', 'error');
     }
+
+    // ==================== ИНВЕНТАРЬ ====================
+function renderInventory() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    
+    app.innerHTML = `
+        <div class="screen-container">
+            <div class="screen-header">
+                <button class="back-btn" onclick="renderShop()">↩️ В магазин</button>
+                <h2>📦 ИНВЕНТАРЬ</h2>
+                <div></div>
+            </div>
+            
+            <div class="inventory-section">
+                <h3>🤖 Скины робота</h3>
+                <div class="inventory-grid">
+                    ${ROBOT_SKINS.filter(s => AppState.inventory.robotSkins.includes(s.id)).map(s => `
+                        <div class="inventory-item ${AppState.currentRobotSkin === s.id ? 'active' : ''}">
+                            <div class="inventory-emoji">${s.emoji}</div>
+                            <div class="inventory-name">${s.name}</div>
+                            ${AppState.currentRobotSkin === s.id ? '<div class="inventory-badge">Надет</div>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="inventory-section">
+                <h3>🐾 Питомцы</h3>
+                <div class="inventory-grid">
+                    ${SHOP_PETS.filter(p => AppState.ownedPets.includes(p.id)).map(p => `
+                        <div class="inventory-item ${AppState.pet.type === p.id ? 'active' : ''}">
+                            <div class="inventory-emoji">${p.emoji}</div>
+                            <div class="inventory-name">${p.name}</div>
+                            ${AppState.pet.type === p.id ? '<div class="inventory-badge">Текущий</div>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="inventory-section">
+                <h3>🎩 Шляпы</h3>
+                <div class="inventory-grid">
+                    ${SHOP_ACCESSORIES.filter(a => AppState.inventory.accessories.includes(a.id)).map(a => `
+                        <div class="inventory-item ${AppState.pet.outfit?.hat === a.emoji ? 'active' : ''}">
+                            <div class="inventory-emoji">${a.emoji}</div>
+                            <div class="inventory-name">${a.name}</div>
+                            ${AppState.pet.outfit?.hat === a.emoji ? '<div class="inventory-badge">Надет</div>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="inventory-section">
+                <h3>🎫 Токены</h3>
+                <div class="tokens-display">
+                    <div class="token-card">
+                        <span>⏭️</span>
+                        <strong>Пропуски:</strong> ${AppState.inventory.skipTokens}
+                    </div>
+                    <div class="token-card">
+                        <span>♻️</span>
+                        <strong>Воскрешения:</strong> ${AppState.inventory.reviveTokens}
+                    </div>
+                </div>
+            </div>
+            
+            <button class="apartment-btn" onclick="navigateTo('apartment')" style="margin-top:20px;">🏠 В квартиру</button>
+        </div>
+    `;
+}
 }
