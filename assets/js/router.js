@@ -10,6 +10,7 @@ const Screens = {
     LEARNING: 'learning',
     MARATHON: 'marathon',
     ARCADE_HUB: 'arcadeHub',
+    IGROTEKA: 'igroteka',
     GAME_MAZE: 'gameMaze',
     GAME_WORD: 'gameWord',
     GAME_CHECKERS: 'gameCheckers',
@@ -50,29 +51,9 @@ function initApp() {
     // Показываем загрузку
     navigateTo(Screens.LOADING);
 
-    // Через 2.5 секунды решаем, какой экран показать
+    // Через 2.5 секунды ВСЕГДА показываем выбор аккаунта
     setTimeout(() => {
-        let profiles = [];
-        try { if (typeof loadProfiles === 'function') profiles = loadProfiles(); } catch(e) {}
-
-        if (profiles.length === 0) {
-            // Первый запуск
-            const defaultProfile = typeof addProfile === 'function'
-                ? addProfile('Ученик', '')
-                : { id: 'child_1', name: 'Ученик', password: '', avatar: '🧑‍🎓', photo: null, createdAt: new Date().toISOString() };
-
-            AppState.currentChild = defaultProfile;
-            try { if (typeof loadState === 'function') loadState(defaultProfile.id); } catch(e) {}
-            try { if (typeof updateStreak === 'function') updateStreak(); } catch(e) {}
-            navigateTo(Screens.APARTMENT);
-        } else if (profiles.length === 1 && !profiles[0].password) {
-            AppState.currentChild = profiles[0];
-            try { if (typeof loadState === 'function') loadState(profiles[0].id); } catch(e) {}
-            try { if (typeof updateStreak === 'function') updateStreak(); } catch(e) {}
-            navigateTo(Screens.APARTMENT);
-        } else {
-            navigateTo(Screens.CHILD_SELECT);
-        }
+        navigateTo(Screens.CHILD_SELECT);
     }, 2500);
 
     console.log('✅ Роутер готов');
@@ -84,6 +65,17 @@ function navigateTo(screen, params = {}) {
     if (!app) { console.error('❌ #app не найден!'); return; }
 
     currentScreen = screen;
+    
+    // Очищаем таймеры при переходе
+    if (window.petSpeechTimer) {
+        clearTimeout(window.petSpeechTimer);
+        window.petSpeechTimer = null;
+    }
+    if (window.robotIdleTimer) {
+        clearTimeout(window.robotIdleTimer);
+        window.robotIdleTimer = null;
+    }
+    
     app.innerHTML = '';
 
     const handlers = {
@@ -110,8 +102,24 @@ function navigateTo(screen, params = {}) {
         },
 
         [Screens.CHILD_SELECT]: () => {
-            if (typeof renderChildSelect === 'function') renderChildSelect();
-            else app.innerHTML = '<h2>Ошибка: renderChildSelect не найдена</h2>';
+            if (typeof renderChildSelect === 'function') {
+                renderChildSelect();
+            } else {
+                // Заглушка, если ui.js ещё не загрузился
+                app.innerHTML = `
+                    <div style="text-align:center;padding:40px;">
+                        <div style="font-size:5rem;margin-bottom:20px;">👨‍👩‍👧</div>
+                        <h2>Выбери ученика</h2>
+                        <p style="margin:20px 0;">Создай профиль чтобы начать обучение!</p>
+                        <button onclick="createDefaultProfile()" style="
+                            background:#4caf50;color:white;border:none;
+                            border-radius:50px;padding:15px 30px;
+                            font-size:1.3rem;cursor:pointer;
+                            box-shadow:0 5px 0 #2e7d32;
+                        ">🧑‍🎓 Новый ученик</button>
+                    </div>
+                `;
+            }
         },
 
         [Screens.APARTMENT]: () => {
@@ -141,6 +149,10 @@ function navigateTo(screen, params = {}) {
         },
 
         [Screens.ARCADE_HUB]: () => {
+            if (typeof renderArcadeHub === 'function') renderArcadeHub();
+        },
+
+        [Screens.IGROTEKA]: () => {
             if (typeof renderArcadeHub === 'function') renderArcadeHub();
         },
 
