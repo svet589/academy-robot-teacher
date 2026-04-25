@@ -1,4 +1,4 @@
-// ==================== 🎯 СТРЕЛЯЛКА 2.0 (ОТКРЫТЫЙ МИР) ====================
+// ==================== 🎯 СТРЕЛЯЛКА 2.0 (ИСПРАВЛЕННЫЙ ИНТЕРФЕЙС) ====================
 const ShootingPetGame = {
     active: false, score: 0, enemies: [], bullets: [], playerX: 50, playerY: 60, ammo: 20, maxAmmo: 20, wave: 1, gameLoop: null, spawnLoop: null, keys: {},
 
@@ -8,24 +8,69 @@ const ShootingPetGame = {
         const modal = document.createElement('div'); modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="modal-card" style="max-width:500px;">
-                <h3>🎯 СТРЕЛЯЛКА — ВОЛНА ${this.wave}</h3>
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.9rem;">
-                    <span>🎯 <span id="stScore">0</span></span>
-                    <span>🔫 <span id="stAmmo">${this.ammo}</span>/${this.maxAmmo}</span>
-                    <span>👾 <span id="stEnemies">0</span></span>
+                <h3 style="text-align:center;margin-bottom:10px;">🎯 СТРЕЛЯЛКА — ВОЛНА ${this.wave}</h3>
+                
+                <!-- Статистика -->
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.95rem;background:#f0f0f0;border-radius:10px;padding:8px 12px;">
+                    <span>🎯 <strong id="stScore">0</strong></span>
+                    <span>🔫 <strong id="stAmmo">${this.ammo}</strong>/${this.maxAmmo}</span>
+                    <span>👾 <strong id="stEnemies">0</strong></span>
                 </div>
+                
+                <!-- Игровое поле -->
                 <div id="stArea" style="position:relative;width:100%;height:350px;background:linear-gradient(180deg,#1a1a2e,#16213e,#0f3460);border-radius:20px;overflow:hidden;cursor:crosshair;">
-                    <div id="stPlayer" style="position:absolute;top:${this.playerY}%;left:${this.playerX}%;transform:translate(-50%,-50%);font-size:3rem;">🦾</div>
+                    <div id="stPlayer" style="position:absolute;top:${this.playerY}%;left:${this.playerX}%;transform:translate(-50%,-50%);font-size:3rem;transition:top 0.1s,left 0.1s;">🦾</div>
                 </div>
-                <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
-                    <button id="stUp" style="font-size:1.5rem;padding:10px 20px;">⬆️</button>
-                    <button id="stDown" style="font-size:1.5rem;padding:10px 20px;">⬇️</button>
-                    <button id="stLeft" style="font-size:1.5rem;padding:10px 20px;">⬅️</button>
-                    <button id="stRight" style="font-size:1.5rem;padding:10px 20px;">➡️</button>
-                    <button id="stShoot" style="font-size:1.5rem;padding:10px 20px;background:#e74c3c;color:white;">🔫</button>
-                    <button id="stReload" style="font-size:1.5rem;padding:10px 20px;">🔄</button>
+                
+                <!-- УПРАВЛЕНИЕ — СГРУППИРОВАННОЕ -->
+                <div style="margin-top:15px;">
+                    <!-- ДЖОЙСТИК -->
+                    <div style="
+                        display:grid;
+                        grid-template-areas:
+                            '. up .'
+                            'left . right'
+                            '. down .';
+                        gap:8px;
+                        width:fit-content;
+                        margin:0 auto;
+                    ">
+                        <button id="stUp" style="grid-area:up;font-size:1.5rem;padding:12px 20px;background:#5dade2;color:white;border:none;border-radius:10px;cursor:pointer;">⬆️</button>
+                        <button id="stLeft" style="grid-area:left;font-size:1.5rem;padding:12px 20px;background:#5dade2;color:white;border:none;border-radius:10px;cursor:pointer;">⬅️</button>
+                        <button id="stRight" style="grid-area:right;font-size:1.5rem;padding:12px 20px;background:#5dade2;color:white;border:none;border-radius:10px;cursor:pointer;">➡️</button>
+                        <button id="stDown" style="grid-area:down;font-size:1.5rem;padding:12px 20px;background:#5dade2;color:white;border:none;border-radius:10px;cursor:pointer;">⬇️</button>
+                    </div>
+                    
+                    <!-- ОРУЖИЕ -->
+                    <div style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                        <button id="stShoot" style="
+                            background:linear-gradient(180deg,#e74c3c,#c0392b);
+                            color:white;border:none;border-radius:25px;
+                            font-size:1.2rem;padding:12px 25px;cursor:pointer;
+                            box-shadow:0 4px 0 #a93226;flex:1;
+                            font-weight:bold;
+                        ">🔫 СТРЕЛЯТЬ</button>
+                        <button id="stReload" style="
+                            background:linear-gradient(180deg,#3498db,#2980b9);
+                            color:white;border:none;border-radius:25px;
+                            font-size:1.2rem;padding:12px 25px;cursor:pointer;
+                            box-shadow:0 4px 0 #1f618d;flex:1;
+                            font-weight:bold;
+                        ">🔄 ПЕРЕЗАРЯДКА</button>
+                    </div>
                 </div>
-                <button id="stClose" class="close-btn" style="margin-top:10px;">Закрыть</button>
+                
+                <!-- Подсказка -->
+                <p style="text-align:center;color:#999;margin-top:10px;font-size:0.8rem;">
+                    💡 Стрелки на клавиатуре — движение | ПРОБЕЛ — стрелять
+                </p>
+                
+                <button id="stClose" class="close-btn" style="
+                    display:block;margin:15px auto 0;
+                    background:#95a5a6;color:white;border:none;
+                    border-radius:20px;padding:10px 30px;
+                    font-size:1rem;cursor:pointer;
+                ">✕ Закрыть</button>
             </div>
         `;
         document.body.appendChild(modal);
