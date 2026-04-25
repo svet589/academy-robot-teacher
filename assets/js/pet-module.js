@@ -39,9 +39,6 @@ const PET_ACCESSORIES = [
     { id: 'hat_crown', emoji: '👑', name: 'Корона', slot: 'hat', price: 150 },
     { id: 'hat_top', emoji: '🎩', name: 'Цилиндр', slot: 'hat', price: 100 },
     { id: 'hat_grad', emoji: '🎓', name: 'Выпускник', slot: 'hat', price: 80 },
-    { id: 'hat_helmet', emoji: '🪖', name: 'Каска', slot: 'hat', price: 60 },
-    { id: 'hat_rescue', emoji: '⛑️', name: 'Спасатель', slot: 'hat', price: 70 },
-    { id: 'hat_party', emoji: '🎊', name: 'Праздничная', slot: 'hat', price: 40 }
 ];
 
 // ==================== ГЛАВНЫЙ РЕНДЕР КОМНАТЫ ====================
@@ -224,11 +221,27 @@ function setupPetEvents(pet) {
         const item = e.target.closest('[data-action]');
         if (!item) return;
         const action = item.dataset.action;
+        
         if (action === 'sleep') {
-            if (pet.isSleeping) { if (typeof petWakeUp === 'function') petWakeUp(); if (typeof showNotification === 'function') showNotification('☀️ Проснулся!', 'success'); }
-            else { if (typeof petGoToSleep === 'function') petGoToSleep(); if (typeof showNotification === 'function') showNotification('😴 Уснул...', 'success'); }
+            // ЗАЩИТА ОТ ДВОЙНОГО КЛИКА (ИСПРАВЛЕНИЕ БАГА)
+            if (window.sleepActionInProgress) return;
+            window.sleepActionInProgress = true;
+            
+            if (pet.isSleeping) {
+                if (typeof petWakeUp === 'function') petWakeUp();
+                if (typeof showNotification === 'function') showNotification('☀️ Питомец проснулся!', 'success');
+            } else {
+                if (typeof petGoToSleep === 'function') petGoToSleep();
+                if (typeof showNotification === 'function') showNotification('😴 Питомец уснул...', 'success');
+            }
+            
             if (typeof saveState === 'function') saveState(AppState.currentChild?.id);
-            setTimeout(() => renderFullPetRoom(document.getElementById('app')), 300);
+            
+            setTimeout(() => {
+                renderFullPetRoom(document.getElementById('app'));
+                window.sleepActionInProgress = false;
+            }, 500);
+            
         } else if (action === 'wardrobe') showPetWardrobe();
         else if (action === 'foodShop') showPetFoodShop();
         else if (action === 'tv') showPetTVGames();
@@ -325,7 +338,4 @@ function showPetVaseFlowers() {
     const modal = document.createElement('div'); modal.className = 'modal-overlay';
     modal.innerHTML = `<div class="modal-card"><div class="modal-close" id="closeVaseBtn">❌</div><h3>⚱️ Выбери цветок</h3><div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin:20px 0;">${flowers.map(f => `<div class="flower-option" data-flower="${f}" style="font-size:3rem;cursor:pointer;padding:10px;">${f}</div>`).join('')}</div></div>`;
     document.body.appendChild(modal);
-    modal.querySelectorAll('.flower-option').forEach(opt => { opt.onclick = () => { if (!AppState.pet.room) AppState.pet.room = {}; AppState.pet.room.vaseFlower = opt.dataset.flower; modal.remove(); renderFullPetRoom(document.getElementById('app')); if (typeof showNotification === 'function') showNotification('🌸 Поставлен!', 'success'); if (typeof saveState === 'function') saveState(AppState.currentChild?.id); }; });
-    document.getElementById('closeVaseBtn').onclick = () => modal.remove();
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-}
+    modal.querySelectorAll('.flower-option').forEach(opt => { opt.onclick = () => { if (!AppState.pet.room) AppState.pet.room = {}; AppState.pet.room.vaseFlower = opt.dataset.flower; modal.remove(); renderFull
