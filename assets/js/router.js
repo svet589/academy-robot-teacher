@@ -1,5 +1,4 @@
-// ==================== ПОЛНЫЙ РОУТЕР ====================
-
+// ==================== РОУТЕР ====================
 const Screens = {
     LOADING: 'loading',
     CHILD_SELECT: 'childSelect',
@@ -10,7 +9,15 @@ const Screens = {
     LEARNING: 'learning',
     MARATHON: 'marathon',
     ARCADE_HUB: 'arcadeHub',
-    IGROTEKA: 'igroteka',
+    PET_ROOM: 'petRoom',
+    SHOP: 'shop',
+    ACHIEVEMENTS: 'achievements',
+    DAILY_TASKS: 'dailyTasks',
+    ENCYCLOPEDIA: 'encyclopedia',
+    ALBUM: 'album',
+    MIRROR: 'mirror',
+    SETTINGS: 'settings',
+    PARENT: 'parent',
     GAME_MAZE: 'gameMaze',
     GAME_WORD: 'gameWord',
     GAME_CHECKERS: 'gameCheckers',
@@ -20,64 +27,43 @@ const Screens = {
     GAME_SUDOKU: 'gameSudoku',
     GAME_SHOOT: 'gameShoot',
     GAME_COMPARE: 'gameCompare',
-    GAME_FINGER: 'gameFinger',
+    GAME_DRAWING: 'gameDrawing',
     GAME_COMPOSITION: 'gameComposition',
     GAME_CLOCK: 'gameClock',
-    GAME_CHANGE: 'gameChange',
-    PET_ROOM: 'petRoom',
-    SHOP: 'shop',
-    INVENTORY: 'inventory',
-    ACHIEVEMENTS: 'achievements',
-    DAILY_TASKS: 'dailyTasks',
-    ENCYCLOPEDIA: 'encyclopedia',
-    ALBUM: 'album',
-    MIRROR: 'mirror',
-    SETTINGS: 'settings',
-    PARENT: 'parent'
+    GAME_CHANGE: 'gameChange'
 };
 
 let currentScreen = Screens.LOADING;
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
 function initApp() {
     console.log('🚀 Академия запускается...');
-
-    // Инициализация систем (если функции существуют)
-    try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) { console.warn('notifications:', e); }
-    try { if (typeof initSounds === 'function') initSounds(); } catch(e) { console.warn('sounds:', e); }
-    try { if (typeof initAchievements === 'function') initAchievements(); } catch(e) { console.warn('achievements:', e); }
-    try { if (typeof initDailyTasks === 'function') initDailyTasks(); } catch(e) { console.warn('daily:', e); }
-
-    // Показываем загрузку
+    
+    // Инициализация систем
+    try { if (typeof initNotifications === 'function') initNotifications(); } catch(e) {}
+    try { if (typeof initAchievements === 'function') initAchievements(); } catch(e) {}
+    try { if (typeof initDailyTasks === 'function') initDailyTasks(); } catch(e) {}
+    
     navigateTo(Screens.LOADING);
-
-    // Через 2.5 секунды ВСЕГДА показываем выбор аккаунта
+    
     setTimeout(() => {
         navigateTo(Screens.CHILD_SELECT);
-    }, 2500);
-
+    }, 2000);
+    
     console.log('✅ Роутер готов');
 }
 
-// ==================== НАВИГАЦИЯ ====================
 function navigateTo(screen, params = {}) {
     const app = document.getElementById('app');
     if (!app) { console.error('❌ #app не найден!'); return; }
-
+    
+    // Очистка таймеров
+    if (window.petSpeechTimer) { clearTimeout(window.petSpeechTimer); window.petSpeechTimer = null; }
+    if (window.robotIdleTimer) { clearTimeout(window.robotIdleTimer); window.robotIdleTimer = null; }
+    if (typeof gameTimer !== 'undefined' && gameTimer) { clearInterval(gameTimer); gameTimer = null; }
+    
     currentScreen = screen;
-    
-    // Очищаем таймеры при переходе
-    if (window.petSpeechTimer) {
-        clearTimeout(window.petSpeechTimer);
-        window.petSpeechTimer = null;
-    }
-    if (window.robotIdleTimer) {
-        clearTimeout(window.robotIdleTimer);
-        window.robotIdleTimer = null;
-    }
-    
     app.innerHTML = '';
-
+    
     const handlers = {
         [Screens.LOADING]: () => {
             app.innerHTML = `
@@ -89,125 +75,86 @@ function navigateTo(screen, params = {}) {
                         <span style="animation:starTwinkle 1.5s infinite 0.3s;">🌟</span>
                         <span style="animation:starTwinkle 1.5s infinite 0.6s;">✨</span>
                     </div>
-                    <div style="width:200px;height:10px;background:#ddd;border-radius:10px;margin-top:30px;overflow:hidden;">
-                        <div id="loadingBar" style="height:100%;background:#4caf50;width:0%;transition:width 2.5s;"></div>
-                    </div>
                 </div>
                 <style>
                     @keyframes loadingBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
                     @keyframes starTwinkle { 0%,100%{opacity:0.3} 50%{opacity:1} }
                 </style>
             `;
-            setTimeout(() => { const bar = document.getElementById('loadingBar'); if (bar) bar.style.width = '100%'; }, 100);
         },
-
+        
         [Screens.CHILD_SELECT]: () => {
-            if (typeof renderChildSelect === 'function') {
-                renderChildSelect();
-            } else {
-                // Заглушка, если ui.js ещё не загрузился
-                app.innerHTML = `
-                    <div style="text-align:center;padding:40px;">
-                        <div style="font-size:5rem;margin-bottom:20px;">👨‍👩‍👧</div>
-                        <h2>Выбери ученика</h2>
-                        <p style="margin:20px 0;">Создай профиль чтобы начать обучение!</p>
-                        <button onclick="createDefaultProfile()" style="
-                            background:#4caf50;color:white;border:none;
-                            border-radius:50px;padding:15px 30px;
-                            font-size:1.3rem;cursor:pointer;
-                            box-shadow:0 5px 0 #2e7d32;
-                        ">🧑‍🎓 Новый ученик</button>
-                    </div>
-                `;
-            }
+            if (typeof renderChildSelect === 'function') renderChildSelect();
+            else app.innerHTML = '<h2>Ошибка загрузки выбора аккаунта</h2>';
         },
-
+        
         [Screens.APARTMENT]: () => {
             if (typeof renderApartment === 'function') renderApartment();
-            else app.innerHTML = '<h2>Ошибка: renderApartment не найдена</h2>';
+            else app.innerHTML = '<h2>Ошибка загрузки квартиры</h2>';
         },
-
+        
         [Screens.SUBJECT_SELECTION]: () => {
             if (typeof renderSubjectSelection === 'function') renderSubjectSelection(app);
         },
-
+        
         [Screens.WORLDS]: () => {
-            if (typeof renderWorldsScreen === 'function') renderWorldsScreen(app, params.subject);
-            else app.innerHTML = '<h2>Миры загружаются...</h2>';
+            if (typeof renderWorlds === 'function') renderWorlds(app, params.subject);
         },
-
+        
         [Screens.LIFE_MAP]: () => {
-            if (typeof renderLifeMap === 'function') renderLifeMap(app, params.subject, params.worldId);
+            if (typeof renderLifeMap === 'function') renderLifeMap(app, params.subject);
         },
-
+        
         [Screens.LEARNING]: () => {
-            if (typeof renderLearningScreen === 'function') renderLearningScreen(app, params.topic);
+            if (typeof renderLearning === 'function') renderLearning(app, params.topic);
         },
-
+        
         [Screens.MARATHON]: () => {
             if (typeof renderMarathon === 'function') renderMarathon(app);
         },
-
+        
         [Screens.ARCADE_HUB]: () => {
-            if (typeof renderArcadeHub === 'function') renderArcadeHub();
+            if (typeof renderArcadeHub === 'function') renderArcadeHub(app);
         },
-
-        [Screens.IGROTEKA]: () => {
-            if (typeof renderArcadeHub === 'function') renderArcadeHub();
-        },
-
-        [Screens.GAME_MAZE]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof MazeGame !== 'undefined') MazeGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_WORD]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof WordGame !== 'undefined') WordGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_CHECKERS]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof CheckersGame !== 'undefined') CheckersGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_TIC_TAC]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof TicTacGame !== 'undefined') TicTacGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_MEMORY]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof MemoryGame !== 'undefined') MemoryGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_BATTLESHIP]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof BattleshipGame !== 'undefined') BattleshipGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_SUDOKU]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof SudokuGame !== 'undefined') SudokuGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_SHOOT]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof ShootGame !== 'undefined') ShootGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_COMPARE]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof CompareGame !== 'undefined') CompareGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_FINGER]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof FingerGame !== 'undefined') FingerGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_COMPOSITION]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof CompositionGame !== 'undefined') CompositionGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_CLOCK]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof ClockGame !== 'undefined') ClockGame.start(document.getElementById('gameContainer')); },
-        [Screens.GAME_CHANGE]: () => { app.innerHTML = '<div id="gameContainer" style="padding:20px;"></div>'; if (typeof ChangeGame !== 'undefined') ChangeGame.start(document.getElementById('gameContainer')); },
-
+        
         [Screens.PET_ROOM]: () => {
             if (typeof renderFullPetRoom === 'function') renderFullPetRoom(app);
-            else app.innerHTML = '<h2>Питомец загружается...</h2>';
+            else app.innerHTML = '<h2>🐾 Питомец загружается...</h2><button onclick="navigateTo(\'apartment\')">↩️ В квартиру</button>';
         },
-
+        
         [Screens.SHOP]: () => {
-            if (typeof renderShop === 'function') renderShop();
+            if (typeof renderShop === 'function') renderShop(app);
         },
-
+        
         [Screens.ACHIEVEMENTS]: () => {
-            if (typeof renderAchievementsScreen === 'function') renderAchievementsScreen(app);
+            if (typeof renderAchievements === 'function') renderAchievements(app);
         },
-
+        
         [Screens.DAILY_TASKS]: () => {
-            if (typeof renderDailyTasksScreen === 'function') renderDailyTasksScreen(app);
+            if (typeof renderDailyTasks === 'function') renderDailyTasks(app);
         },
-
+        
         [Screens.ENCYCLOPEDIA]: () => {
-            if (typeof renderEncyclopediaModule === 'function') renderEncyclopediaModule(app);
+            if (typeof renderEncyclopedia === 'function') renderEncyclopedia(app);
         },
-
+        
         [Screens.ALBUM]: () => {
             if (typeof renderAlbum === 'function') renderAlbum(app);
         },
-
+        
         [Screens.MIRROR]: () => {
             if (typeof renderMirror === 'function') renderMirror(app);
         },
-
+        
         [Screens.SETTINGS]: () => {
-            if (typeof renderSettingsScreen === 'function') renderSettingsScreen(app);
+            if (typeof renderSettings === 'function') renderSettings(app);
         },
-
+        
         [Screens.PARENT]: () => {
             if (typeof renderParentCabinet === 'function') renderParentCabinet(app);
         }
     };
-
+    
     const handler = handlers[screen];
     if (handler) {
         try {
@@ -217,17 +164,43 @@ function navigateTo(screen, params = {}) {
             app.innerHTML = `<div style="padding:40px;text-align:center;"><h2>Ошибка загрузки</h2><p>${e.message}</p><button onclick="navigateTo('apartment')">🏠 В квартиру</button></div>`;
         }
     } else {
-        console.warn(`Нет обработчика для экрана: ${screen}`);
-        navigateTo(Screens.APARTMENT);
+        // Для игр
+        const gameContainers = {
+            [Screens.GAME_MAZE]: 'MazeGame',
+            [Screens.GAME_WORD]: 'WordGame',
+            [Screens.GAME_CHECKERS]: 'CheckersGame',
+            [Screens.GAME_TIC_TAC]: 'TicTacGame',
+            [Screens.GAME_MEMORY]: 'MemoryGame',
+            [Screens.GAME_BATTLESHIP]: 'BattleshipGame',
+            [Screens.GAME_SUDOKU]: 'SudokuGame',
+            [Screens.GAME_SHOOT]: 'ShootGame',
+            [Screens.GAME_COMPARE]: 'CompareGame',
+            [Screens.GAME_DRAWING]: 'DrawingGame',
+            [Screens.GAME_COMPOSITION]: 'CompositionGame',
+            [Screens.GAME_CLOCK]: 'ClockGame',
+            [Screens.GAME_CHANGE]: 'ChangeGame'
+        };
+        
+        if (gameContainers[screen]) {
+            app.innerHTML = `<div id="gameContainer" style="padding:20px;"></div><button onclick="navigateTo('arcadeHub')" class="back-btn" style="margin:10px;">↩️ В игротеку</button>`;
+            setTimeout(() => {
+                const game = window[gameContainers[screen]];
+                if (game && typeof game.start === 'function') {
+                    game.start(document.getElementById('gameContainer'));
+                }
+            }, 100);
+        } else {
+            console.warn(`Нет обработчика для экрана: ${screen}`);
+            navigateTo(Screens.APARTMENT);
+        }
     }
-
+    
     // Сохранение состояния
     if (AppState.currentChild && typeof saveState === 'function') {
-        try { saveState(AppState.currentChild.id); } catch(e) {}
+        try { saveState(AppState.currentChild.id, AppState); } catch(e) {}
     }
-
+    
     console.log(`📍 Экран: ${screen}`);
 }
 
-// ==================== ЗАПУСК ====================
 document.addEventListener('DOMContentLoaded', initApp);
