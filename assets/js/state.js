@@ -1,315 +1,163 @@
-// ==================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ====================
+// ==================== СОСТОЯНИЕ ИГРЫ И КОНСТАНТЫ ====================
+
 const AppState = {
-    // Профиль
     currentChild: null,
-    
-    // Ресурсы
-    coins: 500,
-    gems: 0,
-    
-    // Статистика
+    coins: 0,
+    coins_earned_total: 0,
     totalSolved: 0,
     totalGames: 0,
     streak: 0,
-    lastLogin: null,
-    perfectRounds: 0,
-    marathonCompleted: 0,
-    dailyAllCount: 0,
-    fruitsHarvested: 0,
-    purchasesCount: 0,
-    
-    // Прогресс по предметам
+    currentSubject: null,
+    currentWorld: null,
+    currentRobotSkin: '🤖',
+    settings: { soundEnabled: true, voiceEnabled: true },
+    inventory: {
+        robotSkins: ['🤖'],
+        accessories: [],
+        skipTokens: 0,
+        reviveTokens: 0
+    },
+    ownedPets: [],
+    pet: null,
+    petPlates: [
+        { food: 'apple', emoji: '🍎', quantity: 3 },
+        { food: 'cookie', emoji: '🍪', quantity: 5 },
+        { food: null, emoji: '🍽️', quantity: 0 }
+    ],
+    petRoom: 'bedroom',
     progress: {
         math: { topics: {}, diplomas: [] },
         russian: { topics: {}, diplomas: [] },
         english: { topics: {}, diplomas: [] },
         world: { topics: {}, diplomas: [] }
     },
-    
-    // Инвентарь
-    inventory: {
-        food: [],
-        accessories: [],
-        themes: ['apartment'],
-        skipTokens: 0,
-        reviveTokens: 0,
-        robotSkins: ['🤖']
-    },
-    
-    // Питомец
-    pet: {
-        type: 'cat',
-        name: 'Мурка',
-        hunger: 100,
-        happiness: 100,
-        energy: 100,
-        age: 0,
-        birthDate: new Date().toISOString(),
-        isSleeping: false,
-        outfit: { hat: null, glasses: null, scarf: null, bow: null },
-        room: { vaseFlower: '🌻' },
-        stats: { timesFed: 0, timesPetted: 0, timesPlayed: 0 }
-    },
-    
-    // Владение питомцами
-    ownedPets: ['cat'],
-    currentRobotSkin: '🤖',
-    
-    // Достижения
+    album: [],
+    diplomas: [],
     achievements: [],
-    
-    // Ежедневные задания
     dailyTasks: [],
-    lastDailyDate: null,
     dailyPlantStage: 0,
-    
-    // Настройки
-    settings: {
-        theme: 'apartment',
-        soundEnabled: true,
-        voiceEnabled: true
-    },
-    
-    // Родительский контроль
+    lastDailyDate: '',
     parentControl: {
-        enabled: false,
-        password: '0000',
         dailyTimeLimit: 60,
         timePlayedToday: 0,
-        restrictedGames: [],
-        shopEnabled: true
+        password: '0000'
     },
-    
-    // Альбом
-    album: [],
-    
-    // Текущее состояние
-    currentScreen: 'loading',
-    currentSubject: null,
-    currentWorld: null,
-    
-    // Статистика по играм
-    gameStats: {
-        mazeCompleted: 0, wordWins: 0, checkersWins: 0, ticTacWins: 0,
-        memoryCompleted: 0, battleshipWins: 0, sudokuCompleted: 0,
-        shootTargets: 0, compareCorrect: 0, fingerCorrect: 0,
-        compositionCorrect: 0, clockCorrect: 0, changeCorrect: 0
-    }
+    gameRecords: {},
+    solvedHistory: [],
+    purchaseHistory: [],
+    mistakesHistory: []
 };
 
-// ==================== СОБЫТИЯ ====================
-const EventBus = {
-    events: {},
-    on(event, callback) {
-        if (!this.events[event]) this.events[event] = [];
-        this.events[event].push(callback);
-    },
-    emit(event, data) {
-        if (this.events[event]) this.events[event].forEach(cb => cb(data));
-    }
+const PETS = {
+    cat: { name: 'Кошка', emoji: '🐱' },
+    dog: { name: 'Собака', emoji: '🐶' },
+    rabbit: { name: 'Кролик', emoji: '🐰' },
+    fox: { name: 'Лис', emoji: '🦊' },
+    koala: { name: 'Коала', emoji: '🐨' },
+    pig: { name: 'Свинка', emoji: '🐷' }
 };
 
-// ==================== МЕТОДЫ СОСТОЯНИЯ ====================
-function updateCoins(amount) {
-    AppState.coins = Math.max(0, AppState.coins + amount);
-    EventBus.emit('coins:updated', AppState.coins);
-    checkAchievements();
-}
-
-function updateSolved(amount = 1) {
-    AppState.totalSolved += amount;
-    EventBus.emit('solved:updated', AppState.totalSolved);
-    checkAchievements();
-}
-
-function updateGamesPlayed() {
-    AppState.totalGames++;
-    EventBus.emit('games:updated', AppState.totalGames);
-    checkAchievements();
-}
-
-function updateStreak() {
-    const today = new Date().toDateString();
-    if (AppState.lastLogin === today) return;
-    const yesterday = new Date(Date.now() - 86400000).toDateString();
-    if (AppState.lastLogin === yesterday) AppState.streak++;
-    else AppState.streak = 1;
-    AppState.lastLogin = today;
-    EventBus.emit('streak:updated', AppState.streak);
-    checkAchievements();
-}
-
-function updatePetHunger(amount) {
-    if (!AppState.pet) return;
-    AppState.pet.hunger = Math.max(0, Math.min(100, AppState.pet.hunger + amount));
-    if (amount > 0) AppState.pet.stats.timesFed++;
-    EventBus.emit('pet:updated', AppState.pet);
-}
-
-function updatePetHappiness(amount) {
-    if (!AppState.pet) return;
-    AppState.pet.happiness = Math.max(0, Math.min(100, AppState.pet.happiness + amount));
-    if (amount > 0) AppState.pet.stats.timesPetted++;
-    EventBus.emit('pet:updated', AppState.pet);
-}
-
-function updatePetEnergy(amount) {
-    if (!AppState.pet) return;
-    AppState.pet.energy = Math.max(0, Math.min(100, AppState.pet.energy + amount));
-    EventBus.emit('pet:updated', AppState.pet);
-}
-
-function petGoToSleep() {
-    if (!AppState.pet) return;
-    AppState.pet.isSleeping = true;
-    EventBus.emit('pet:updated', AppState.pet);
-}
-
-function petWakeUp() {
-    if (!AppState.pet) return;
-    AppState.pet.isSleeping = false;
-    AppState.pet.energy = 100;
-    AppState.pet.happiness = Math.min(100, AppState.pet.happiness + 20);
-    EventBus.emit('pet:updated', AppState.pet);
-}
-
-// ==================== СМЕНА ПИТОМЦА ====================
-function getDefaultPetName(type) {
-    const names = { cat: 'Мурка', dog: 'Бобик', rabbit: 'Пушок', fox: 'Рыжик', koala: 'Эвкалипт', pig: 'Хрюша' };
-    return names[type] || 'Питомец';
-}
-
-function switchPetType(newType) {
-    if (!AppState.ownedPets.includes(newType)) return false;
-    const defaultNames = Object.values(getDefaultPetName);
-    if (Object.values(getDefaultPetName).includes(AppState.pet.name)) {
-        AppState.pet.name = getDefaultPetName(newType);
-    }
-    AppState.pet.type = newType;
-    AppState.pet.outfit = { hat: null, glasses: null, scarf: null, bow: null };
-    EventBus.emit('pet:updated', AppState.pet);
-    if (typeof saveState === 'function') saveState();
-    return true;
-}
-
-function changePetName(newName) {
-    if (!newName || newName.trim().length === 0) return false;
-    if (AppState.coins < 1000) return false;
-    AppState.coins -= 1000;
-    AppState.pet.name = newName.trim();
-    EventBus.emit('pet:updated', AppState.pet);
-    EventBus.emit('coins:updated', AppState.coins);
-    if (typeof saveState === 'function') saveState();
-    return true;
-}
-
-// ==================== РАСТЕНИЕ (ПЛОДЫ) ====================
-function updateDailyPlant() {
-    const completed = (AppState.dailyTasks || []).filter(t => t.completed).length;
-    AppState.dailyPlantStage = Math.min(3, completed);
-    EventBus.emit('plant:updated', AppState.dailyPlantStage);
-}
-
-function harvestFruit() {
-    if (AppState.dailyPlantStage < 3) return null;
-    AppState.dailyPlantStage = 0;
-    AppState.fruitsHarvested = (AppState.fruitsHarvested || 0) + 1;
-    const roll = Math.random();
-    let reward, type;
-    if (roll < 0.5) { reward = Math.floor(Math.random()*50)+20; type = 'coins'; }
-    else if (roll < 0.8) { reward = Math.floor(Math.random()*150)+50; type = 'coins'; }
-    else if (roll < 0.95) { reward = {type:'skip',amount:1}; type = 'token'; }
-    else { reward = Math.floor(Math.random()*500)+200; type = 'jackpot'; }
-    if (type === 'coins') updateCoins(reward);
-    else if (type === 'token') { AppState.inventory.skipTokens++; reward = '⏭️ Пропуск'; }
-    else if (type === 'jackpot') updateCoins(reward);
-    EventBus.emit('plant:updated', AppState.dailyPlantStage);
-    checkAchievements();
-    return { type, reward };
-}
-
-// ==================== ДОСТИЖЕНИЯ (50+) ====================
-const ACHIEVEMENTS_LIST = [
-    { id:'first', name:'📜 Первые шаги', desc:'Реши 1 задачу', condition:s=>s.totalSolved>=1, reward:10 },
-    { id:'ten', name:'🎯 Десятка', desc:'Реши 10 задач', condition:s=>s.totalSolved>=10, reward:20 },
-    { id:'twenty', name:'🌟 20 задач', desc:'Реши 20 задач', condition:s=>s.totalSolved>=20, reward:25 },
-    { id:'fifty', name:'💪 Полтинник', desc:'Реши 50 задач', condition:s=>s.totalSolved>=50, reward:50 },
-    { id:'hundred', name:'🎉 Сотня', desc:'Реши 100 задач', condition:s=>s.totalSolved>=100, reward:100 },
-    { id:'five_hundred', name:'👑 Мудрец', desc:'Реши 500 задач', condition:s=>s.totalSolved>=500, reward:500 },
-    { id:'streak3', name:'📅 3 дня', desc:'Заходи 3 дня подряд', condition:s=>s.streak>=3, reward:30 },
-    { id:'streak7', name:'⭐ Неделя', desc:'Заходи 7 дней', condition:s=>s.streak>=7, reward:100 },
-    { id:'streak30', name:'🌟 Месяц', desc:'Заходи 30 дней', condition:s=>s.streak>=30, reward:500 },
-    { id:'coin50', name:'🪙 50 монет', desc:'Накопи 50 монет', condition:s=>s.coins>=50, reward:5 },
-    { id:'coin100', name:'💰 100 монет', desc:'Накопи 100 монет', condition:s=>s.coins>=100, reward:10 },
-    { id:'coin500', name:'💎 500 монет', desc:'Накопи 500 монет', condition:s=>s.coins>=500, reward:25 },
-    { id:'coin1000', name:'🏦 1000 монет', desc:'Накопи 1000 монет', condition:s=>s.coins>=1000, reward:50 },
-    { id:'coin5000', name:'👑 5000 монет', desc:'Накопи 5000 монет', condition:s=>s.coins>=5000, reward:200 },
-    { id:'gamer', name:'🎮 Геймер', desc:'Сыграй 10 игр', condition:s=>s.totalGames>=10, reward:40 },
-    { id:'pro_gamer', name:'🏅 Про-геймер', desc:'Сыграй 50 игр', condition:s=>s.totalGames>=50, reward:100 },
-    { id:'legend_gamer', name:'🎖️ Легенда', desc:'Сыграй 100 игр', condition:s=>s.totalGames>=100, reward:200 },
-    { id:'maze_master', name:'🗺️ Исследователь', desc:'Пройди лабиринт', condition:s=>(s.gameStats?.mazeCompleted||0)>=1, reward:20 },
-    { id:'word_master', name:'❓ Словесник', desc:'Выиграй в Слово', condition:s=>(s.gameStats?.wordWins||0)>=1, reward:20 },
-    { id:'checkers_win', name:'⚫ Шашист', desc:'Выиграй в шашки', condition:s=>(s.gameStats?.checkersWins||0)>=1, reward:25 },
-    { id:'tic_tac_win', name:'❌ Крестик', desc:'Выиграй в крестики-нолики', condition:s=>(s.gameStats?.ticTacWins||0)>=1, reward:20 },
-    { id:'memory_master', name:'🧠 Мастер памяти', desc:'Пройди Найди пару', condition:s=>(s.gameStats?.memoryCompleted||0)>=1, reward:25 },
-    { id:'battleship_master', name:'🚢 Адмирал', desc:'Победи в морском бое', condition:s=>(s.gameStats?.battleshipWins||0)>=1, reward:30 },
-    { id:'sudoku_master', name:'🧩 Судоку-мастер', desc:'Реши судоку', condition:s=>(s.gameStats?.sudokuCompleted||0)>=1, reward:25 },
-    { id:'shoot_master', name:'🎯 Снайпер', desc:'Попади в 10 целей', condition:s=>(s.gameStats?.shootTargets||0)>=10, reward:25 },
-    { id:'fast_compare', name:'⚡ Быстрый ум', desc:'Сравни 20 чисел', condition:s=>(s.gameStats?.compareCorrect||0)>=20, reward:25 },
-    { id:'clock_master', name:'🕐 Повелитель времени', desc:'Определи время 5 раз', condition:s=>(s.gameStats?.clockCorrect||0)>=5, reward:20 },
-    { id:'pet_fed_10', name:'🍖 Кормилец', desc:'Покорми питомца 10 раз', condition:s=>(s.pet?.stats?.timesFed||0)>=10, reward:30 },
-    { id:'pet_pet_50', name:'🤗 Ласковый', desc:'Погладь питомца 50 раз', condition:s=>(s.pet?.stats?.timesPetted||0)>=50, reward:40 },
-    { id:'pet_play_20', name:'🎾 Игрок', desc:'Поиграй с питомцем 20 раз', condition:s=>(s.pet?.stats?.timesPlayed||0)>=20, reward:35 },
-    { id:'pet_outfit', name:'👕 Модник', desc:'Надень 3 предмета на питомца', condition:s=>Object.values(s.pet?.outfit||{}).filter(Boolean).length>=3, reward:30 },
-    { id:'pet_age_30', name:'🎂 Месячный', desc:'Питомцу 30 дней', condition:s=>(s.pet?.age||0)>=30, reward:100 },
-    { id:'daily_all_1', name:'📋 Планировщик', desc:'Выполни все задания дня', condition:s=>s.dailyPlantStage>=3, reward:25 },
-    { id:'daily_all_7', name:'🎯 Недельный план', desc:'Выполни все задания 7 раз', condition:s=>(s.dailyAllCount||0)>=7, reward:100 },
-    { id:'buy_first', name:'🛍️ Первая покупка', desc:'Купи что-нибудь', condition:s=>(s.purchasesCount||0)>=1, reward:10 },
-    { id:'buy_skin', name:'🤖 Коллекционер', desc:'Купи скин робота', condition:s=>(s.inventory?.robotSkins?.length||0)>=2, reward:25 },
-    { id:'buy_pet', name:'🐾 Друг питомцев', desc:'Купи нового питомца', condition:s=>(s.ownedPets?.length||0)>=2, reward:50 },
-    { id:'math_10', name:'📐 Математик', desc:'Пройди 10 тем по математике', condition:s=>Object.values(s.progress?.math?.topics||{}).filter(t=>t.completed).length>=10, reward:30 },
-    { id:'russian_10', name:'📖 Грамотей', desc:'Пройди 10 тем по русскому', condition:s=>Object.values(s.progress?.russian?.topics||{}).filter(t=>t.completed).length>=10, reward:30 },
-    { id:'english_10', name:'🇬🇧 Полиглот', desc:'Пройди 10 тем по английскому', condition:s=>Object.values(s.progress?.english?.topics||{}).filter(t=>t.completed).length>=10, reward:30 },
-    { id:'world_10', name:'🌍 Эрудит', desc:'Пройди 10 тем по окр. миру', condition:s=>Object.values(s.progress?.world?.topics||{}).filter(t=>t.completed).length>=10, reward:30 },
-    { id:'stars_50', name:'⭐ Звёздный', desc:'Собери 50 звёзд', condition:s=>getTotalStars(s)>=50, reward:50 },
-    { id:'stars_100', name:'🌟 Созвездие', desc:'Собери 100 звёзд', condition:s=>getTotalStars(s)>=100, reward:100 },
-    { id:'perfect_round', name:'🎯 Идеальный раунд', desc:'Пройди урок без ошибок', condition:s=>(s.perfectRounds||0)>=1, reward:30 },
-    { id:'marathon', name:'🏃 Марафонец', desc:'Пройди марафон', condition:s=>(s.marathonCompleted||0)>=1, reward:50 },
-    { id:'fruit_5', name:'🍎 Садовод', desc:'Собери 5 плодов', condition:s=>(s.fruitsHarvested||0)>=5, reward:40 },
-    { id:'album_photo', name:'📷 Фотограф', desc:'Добавь фото в альбом', condition:s=>(s.album?.length||0)>=1, reward:15 },
-    { id:'album_10', name:'🖼️ Художник', desc:'Добавь 10 фото в альбом', condition:s=>(s.album?.length||0)>=10, reward:50 },
-    { id:'change_name', name:'✏️ Творец', desc:'Смени имя питомца', condition:s=>s.pet?.name!==getDefaultPetName(s.pet?.type), reward:20 }
+const PET_FOOD = [
+    { id: 'apple', emoji: '🍎', name: 'Яблоко', nutrition: 20, price: 5 },
+    { id: 'banana', emoji: '🍌', name: 'Банан', nutrition: 20, price: 5 },
+    { id: 'cookie', emoji: '🍪', name: 'Печенье', nutrition: 15, happiness: 5, price: 8 },
+    { id: 'pizza', emoji: '🍕', name: 'Пицца', nutrition: 40, happiness: 15, price: 20 },
+    { id: 'cake', emoji: '🎂', name: 'Тортик', nutrition: 50, happiness: 20, price: 25 },
+    { id: 'icecream', emoji: '🍦', name: 'Мороженое', nutrition: 15, happiness: 15, price: 10 },
+    { id: 'bone', emoji: '🦴', name: 'Косточка', nutrition: 30, price: 10 },
+    { id: 'fish', emoji: '🐟', name: 'Рыбка', nutrition: 25, price: 12 }
 ];
 
-function getTotalStars(state) {
-    let total = 0;
-    ['math','russian','english','world'].forEach(subj => {
-        if (state.progress[subj]) {
-            total += Object.values(state.progress[subj].topics).reduce((sum, t) => sum + (t.stars||0), 0);
-        }
-    });
-    return total;
-}
+const PET_ACCESSORIES = [
+    { id: 'hat_cap', emoji: '🧢', name: 'Кепка', slot: 'hat', price: 50 },
+    { id: 'hat_crown', emoji: '👑', name: 'Корона', slot: 'hat', price: 150 },
+    { id: 'hat_top', emoji: '🎩', name: 'Цилиндр', slot: 'hat', price: 100 },
+    { id: 'hat_grad', emoji: '🎓', name: 'Выпускник', slot: 'hat', price: 80 },
+    { id: 'hat_party', emoji: '🎊', name: 'Праздничная', slot: 'hat', price: 40 }
+];
 
-function checkAchievements() {
-    ACHIEVEMENTS_LIST.forEach(ach => {
-        if (!AppState.achievements.includes(ach.id) && ach.condition(AppState)) {
-            AppState.achievements.push(ach.id);
-            updateCoins(ach.reward);
-            EventBus.emit('achievement:unlocked', ach);
-            if (typeof showNotification === 'function') {
-                showNotification(`🏆 ${ach.name}! +${ach.reward}🪙`, 'success');
-            }
-            if (typeof showConfetti === 'function') {
-                showConfetti('achievement');
-            }
-        }
-    });
-}
+const ACHIEVEMENTS_LIST = [
+    // Базовые (из твоего файла)
+    { id: 'first', name: '📜 Первые шаги', desc: 'Реши первую задачу', reward: 10 },
+    { id: 'ten', name: '🎯 Десятка', desc: 'Реши 10 задач', reward: 15 },
+    { id: 'twenty', name: '🌟 20 задач', desc: 'Реши 20 задач', reward: 20 },
+    { id: 'fifty', name: '💪 50 задач', desc: 'Реши 50 задач', reward: 30 },
+    { id: 'hundred', name: '🎉 100 задач', desc: 'Реши 100 задач', reward: 50 },
+    { id: 'coin10', name: '🪙 10 монет', desc: 'Накопи 10 монет', reward: 5 },
+    { id: 'coin50', name: '💰 50 монет', desc: 'Накопи 50 монет', reward: 10 },
+    { id: 'coin100', name: '💎 100 монет', desc: 'Накопи 100 монет', reward: 20 },
+    { id: 'streak3', name: '📅 3 дня подряд', desc: 'Заходи в игру 3 дня подряд', reward: 15 },
+    { id: 'streak7', name: '⭐ Неделя', desc: 'Заходи в игру 7 дней подряд', reward: 30 },
+    { id: 'perfect1', name: '🎯 Первый идеальный', desc: 'Сделай идеальный раунд', reward: 20 },
+    { id: 'buyFirst', name: '🛍️ Первая покупка', desc: 'Купи что-нибудь в магазине', reward: 10 },
+    { id: 'collector', name: '🧩 Коллекционер', desc: 'Накопи 3 пропуска', reward: 30 },
+    { id: 'petOwner', name: '🐾 Друг питомцев', desc: 'Купи питомца', reward: 30 },
+    { id: 'mazeMaster', name: '🗺️ Исследователь', desc: 'Пройди лабиринт', reward: 20 },
+    { id: 'wordMaster', name: '❓ Словесник', desc: 'Отгадай слово', reward: 20 },
+    { id: 'checkersWin', name: '⚫ Шашист', desc: 'Выиграй в шашки', reward: 25 },
+    { id: 'ticTacWin', name: '❌ Крестик', desc: 'Выиграй в крестики-нолики', reward: 20 },
+    { id: 'memoryMaster', name: '🧠 Мастер памяти', desc: 'Пройди игру Найди пару', reward: 25 },
+    { id: 'battleshipMaster', name: '🚢 Адмирал', desc: 'Победи в морском бое', reward: 30 },
+    { id: 'sudokuMaster', name: '🧩 Судоку-мастер', desc: 'Реши судоку 4×4', reward: 25 },
+    { id: 'shootMaster', name: '🎯 Снайпер', desc: 'Попади в 10 целей', reward: 25 },
+    { id: 'fastCompare', name: '⚡ Быстрый ум', desc: 'Правильно сравни 20 чисел', reward: 25 },
+    { id: 'clockMaster', name: '🕐 Повелитель времени', desc: 'Правильно определи время 5 раз', reward: 20 },
+    // Новые учебные
+    { id: 'math_25', name: '🧮 Математик', desc: 'Пройди 25 тем по математике', reward: 50 },
+    { id: 'russian_23', name: '📖 Грамотей', desc: 'Пройди 23 темы по русскому', reward: 50 },
+    { id: 'english_22', name: '🇬🇧 Полиглот', desc: 'Пройди 22 темы по английскому', reward: 50 },
+    { id: 'world_22', name: '🌍 Натуралист', desc: 'Пройди 22 темы по окруж. миру', reward: 50 },
+    { id: 'marathon_5', name: '🏃 Марафонец', desc: 'Пройди 5 марафонов', reward: 25 },
+    { id: 'perfect_5', name: '⭐ Отличник', desc: 'Получи 3 звезды в 5 темах', reward: 35 },
+    // Новые для питомца
+    { id: 'pet_feed_10', name: '🍖 Кормилец', desc: 'Покорми питомца 10 раз', reward: 15 },
+    { id: 'pet_pet_10', name: '🤗 Заботливый', desc: 'Погладь питомца 10 раз', reward: 15 },
+    { id: 'pet_sleep_5', name: '😴 Соня', desc: 'Уложи питомца спать 5 раз', reward: 10 },
+    { id: 'pet_hat_3', name: '🎩 Модник', desc: 'Купи 3 шляпы для питомца', reward: 30 },
+    // Новые коллекционные
+    { id: 'coin500', name: '💵 Богач', desc: 'Накопи 500 монет', reward: 40 },
+    { id: 'coin1000', name: '🏦 Миллионер', desc: 'Накопи 1000 монет', reward: 50 },
+    { id: 'skin_5', name: '🤖 Коллекционер', desc: 'Собери 5 скинов роботов', reward: 35 },
+    { id: 'game_10', name: '🎮 Геймер', desc: 'Сыграй в 10 разных игр', reward: 30 },
+    // Новые социальные
+    { id: 'streak14', name: '🔥 Две недели', desc: 'Заходи 14 дней подряд', reward: 40 },
+    { id: 'streak30', name: '👑 Месяц', desc: 'Заходи 30 дней подряд', reward: 60 },
+    { id: 'daily_all_5', name: '📅 Планировщик', desc: 'Выполни все 3 задания дня 5 раз', reward: 25 },
+    { id: 'harvest_5', name: '🍎 Садовод', desc: 'Собери урожай с растения 5 раз', reward: 20 },
+    { id: 'early_bird', name: '🌅 Жаворонок', desc: 'Зайди в игру до 8 утра', reward: 15 },
+    { id: 'night_owl', name: '🦉 Сова', desc: 'Зайди в игру после 10 вечера', reward: 15 },
+    { id: 'mistakes_0_10', name: '🧠 Эрудит', desc: 'Пройди 10 тем без единой ошибки', reward: 45 },
+    // Секретные
+    { id: 'secret_clock', name: '🥚 Пасхалка', desc: 'Нажми на часы 10 раз', reward: 50, secret: true },
+    { id: 'secret_mrx', name: '🦊 MRX', desc: 'Введи кодовое слово', reward: 100, secret: true }
+];
 
-function getAchievements() {
-    return ACHIEVEMENTS_LIST.map(ach => ({
-        ...ach,
-        unlocked: AppState.achievements.includes(ach.id)
-    }));
-}
+const AVATARS_LIST = [
+    { emoji: "🤖", name: "Робот", price: 0 },
+    { emoji: "🧑‍🏫", name: "Робот-учитель", price: 30 },
+    { emoji: "🧑‍🔬", name: "Робот-учёный", price: 30 },
+    { emoji: "🧑‍🎨", name: "Робот-художник", price: 30 },
+    { emoji: "🧑‍🍳", name: "Робот-повар", price: 30 },
+    { emoji: "🧑‍🚀", name: "Робот-космонавт", price: 35 },
+    { emoji: "🐻‍❄️", name: "Робот-мишка", price: 25 },
+    { emoji: "🐉", name: "Робот-дракон", price: 40 }
+];
+
+const SHOP_GOODS = [
+    { id: 'skip', name: '⤴️ Пропуск', price: 50, desc: 'Позволяет пропустить задание' },
+    { id: 'revive', name: '♻️ Воскрешение', price: 60, desc: 'Восстанавливает 3 жизни' },
+    { id: 'multiplier', name: '⚡ Удвоитель (3 задачи)', price: 40, desc: 'Удваивает монеты на 3 задачи' },
+    { id: 'shield', name: '🛡️ Защита', price: 25, desc: 'Даёт +1 жизнь в уроке' },
+    { id: 'luck', name: '🍀 Талисман удачи', price: 100, desc: '+10% ко всем монетам' },
+    { id: 'chest', name: '🎁 Секретный сундук', price: 50, desc: 'Случайный бонус (10-100 монет)' }
+];
+
+// Глобальные переменные для уроков
+let currentLessonSubject = null;
+let currentLessonTopic = null;
+let currentStep = 1;
+let currentLives = 3;
+let currentScore = 0;
+let totalSteps = 5;
+let hintShown = false;
+let currentDifficulty = 10;
