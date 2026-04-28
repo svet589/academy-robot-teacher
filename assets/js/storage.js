@@ -1,121 +1,79 @@
 // ==================== ХРАНИЛИЩЕ (STORAGE) ====================
-const DB_NAME = 'AcademyRobotTeacher';
-const DB_VERSION = 1;
-let db = null;
 
-function openDB() {
-    return new Promise((resolve, reject) => {
-        if (db) return resolve(db);
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onupgradeneeded = (event) => {
-            const database = event.target.result;
-            if (!database.objectStoreNames.contains('childState')) {
-                database.createObjectStore('childState', { keyPath: 'id' });
-            }
-            if (!database.objectStoreNames.contains('diplomas')) {
-                database.createObjectStore('diplomas', { keyPath: 'id' });
-            }
-            if (!database.objectStoreNames.contains('photos')) {
-                database.createObjectStore('photos', { keyPath: 'id' });
-            }
-        };
-        request.onsuccess = (event) => {
-            db = event.target.result;
-            resolve(db);
-        };
-        request.onerror = (event) => reject(event.target.error);
-    });
+function hashPassword(pwd) { return btoa(pwd); }
+function verifyPassword(input, hash) { return btoa(input) === hash; }
+
+// ==================== ДЕТИ (ПРОФИЛИ) ====================
+function loadChildrenList() {
+    const saved = localStorage.getItem('math_academy_children');
+    childrenList = saved ? JSON.parse(saved) : ['Ученик'];
 }
 
-async function saveToIDB(storeName, data) {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = database.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        store.put(data);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-    });
+function saveChildrenList() {
+    localStorage.setItem('math_academy_children', JSON.stringify(childrenList));
 }
 
-async function loadFromIDB(storeName, id) {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = database.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const request = store.get(id);
-        request.onsuccess = () => resolve(request.result ? request.result.data || request.result : null);
-        request.onerror = () => reject(request.error);
-    });
+// ==================== ДАННЫЕ РЕБЁНКА ====================
+function loadChildData(name) {
+    const saved = localStorage.getItem('math_academy_child_' + name);
+    if (saved) {
+        const loaded = JSON.parse(saved);
+        for (let key in data) {
+            if (loaded[key] !== undefined) data[key] = loaded[key];
+        }
+    } else {
+        resetData();
+    }
+    if (!data.owned_avatars) data.owned_avatars = ["🤖"];
+    if (!data.current_avatar) data.current_avatar = "🤖";
+    if (!data.owned_themes) data.owned_themes = ["default"];
+    if (!data.daily_stats) data.daily_stats = [];
+    if (!data.mistakes) data.mistakes = [];
+    if (!data.boosters) data.boosters = { multiplier: 0, multiplier_left: 0, shield: false, luck: false };
+    if (!data.pet) data.pet = null;
 }
 
-async function loadAllFromIDB(storeName) {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = database.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
+function saveChildData(name, d) {
+    localStorage.setItem('math_academy_child_' + name, JSON.stringify(d));
 }
 
-// Хранение состояния игры для ребёнка
-async function saveState(childId, stateData) {
-    return saveToIDB('childState', { id: childId, data: stateData, timestamp: Date.now() });
+function saveData() {
+    if (currentChild) saveChildData(currentChild, data);
 }
 
-async function loadState(childId) {
-    return loadFromIDB('childState', childId);
-}
-
-// Хранение дипломов (для IndexedDB)
-async function saveDiploma(diplomaData) {
-    return saveToIDB('diplomas', diplomaData);
-}
-
-async function loadAllDiplomas() {
-    return loadAllFromIDB('diplomas');
-}
-
-// Хранение фото (для IndexedDB)
-async function savePhoto(photoData) {
-    return saveToIDB('photos', photoData);
-}
-
-async function loadAllPhotos() {
-    return loadAllFromIDB('photos');
-}
-
-// Профили детей (маленькие данные — оставляем в localStorage)
-function loadProfiles() {
-    const saved = localStorage.getItem('academy_profiles');
-    return saved ? JSON.parse(saved) : [];
-}
-
-function saveProfiles(profiles) {
-    localStorage.setItem('academy_profiles', JSON.stringify(profiles));
-}
-
-function addProfile(name, password) {
-    const profiles = loadProfiles();
-    const newProfile = {
-        id: 'child_' + Date.now(),
-        name: name,
-        password: password || '',
-        avatar: '🧑‍🎓',
-        photo: null,
-        createdAt: new Date().toISOString()
+function resetData() {
+    data = {
+        total_solved: 0, achievements: [], coins: 0, coins_earned_total: 0,
+        purchases_count: 0, skip_token: 0, revive_token: 0, perfect_rounds: 0,
+        skin_theme: "default", daily_tasks: [], last_daily_date: "", last_login_date: "",
+        login_streak: 0, passwordHash: "", pet: null, purchase_log: [],
+        lesson_log: [], current_avatar: "🤖", owned_avatars: ["🤖"], owned_themes: ["default"],
+        daily_stats: [], mistakes: [], boosters: { multiplier: 0, multiplier_left: 0, shield: false, luck: false },
+        games_unlocked: 0
     };
-    profiles.push(newProfile);
-    saveProfiles(profiles);
-    return newProfile;
 }
 
+// ==================== МАСТЕР-ПАРОЛЬ ====================
 function loadMasterPassword() {
-    return localStorage.getItem('academy_master_password') || '0000';
+    const saved = localStorage.getItem('math_academy_master_password');
+    masterPasswordHash = saved || hashPassword('0000');
+    if (!saved) localStorage.setItem('math_academy_master_password', masterPasswordHash);
 }
 
-function saveMasterPassword(password) {
-    localStorage.setItem('academy_master_password', password);
+function setMasterPassword(pwd) {
+    masterPasswordHash = hashPassword(pwd);
+    localStorage.setItem('math_academy_master_password', masterPasswordHash);
+}
+
+function verifyMasterPassword(input) {
+    return verifyPassword(input, masterPasswordHash);
+}
+
+// ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+function enterChildMode(name) {
+    currentChild = name;
+    loadChildData(name);
+    updateStatsUI();
+    updateRobotAvatar();
+    showScreen('mainMenu');
 }
