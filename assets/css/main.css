@@ -533,3 +533,11 @@ button:disabled { opacity: 0.5; pointer-events: none; }
     .screen-container { padding: 15px; }
     .topic-card { font-size: 0.9rem; }
 }
+
+/* ==================== ЭКРАНЫ ==================== */
+.screen { display: none; }
+.screen.active { display: block; }
+
+.modal { display: none; }
+.modal.active { display: flex; }
+}
