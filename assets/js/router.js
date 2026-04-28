@@ -42,11 +42,16 @@ const Screens = {
 let currentScreen = Screens.LOADING;
 
 function showScreen(screenId) {
-    // Скрываем все экраны
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // Скрываем ВСЕ экраны И ВСЕ модалки
+    document.querySelectorAll('.screen, .modal').forEach(s => {
+        s.classList.remove('active');
+    });
     
+    // Показываем нужный экран
     const target = document.getElementById(screenId);
-    if (target) target.classList.add('active');
+    if (target) {
+        target.classList.add('active');
+    }
     
     // Обновляем заголовки
     if (screenId === 'mainMenu' || screenId === 'apartment') {
@@ -82,6 +87,11 @@ function showScreen(screenId) {
 function initApp() {
     console.log('🚀 Академия запускается...');
     
+    // Принудительно скрываем ВСЁ при старте
+    document.querySelectorAll('.screen, .modal').forEach(s => {
+        s.classList.remove('active');
+    });
+    
     loadMasterPassword();
     loadChildrenList();
     
@@ -89,7 +99,6 @@ function initApp() {
     if (childrenList.length > 0) {
         showScreen('childSelect');
     } else {
-        // Создаём первого ученика
         resetData();
         data.owned_avatars = ["🤖"];
         data.current_avatar = "🤖";
