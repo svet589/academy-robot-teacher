@@ -12,22 +12,282 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 </head>
 <body>
-    <!-- Основной контейнер приложения -->
-    <div id="game"></div>
-    
-    <!-- Контейнер для уведомлений (фиксированный, внизу экрана) -->
+    <!-- Основной контейнер -->
+    <div id="game">
+        <!-- Робот-заголовок -->
+        <div class="robot" id="robotHeader" style="display: none;">
+            <div class="robot-avatar" id="robotAvatar">🤖</div>
+            <div class="robot-message" id="robotMsg">Привет! Решено: 0</div>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="stats" id="statsHeader" style="display: none;">
+            <span>🏆 <span id="achCount">0</span></span>
+            <span>🪙 <span id="coinCount">0</span></span>
+            <span>📚 <span id="solvedCount">0</span></span>
+            <span>🔥 <span id="streakCount">0</span></span>
+        </div>
+
+        <!-- Выбор аккаунта -->
+        <div id="childSelect" class="screen active">
+            <h2>👋 Привет! Кто ты?</h2>
+            <div id="childList" class="menu-grid"></div>
+            <button id="addNewChildBtn">➕ Новый ученик</button>
+            <button id="parentAccessBtn">🔐 Родителям</button>
+        </div>
+
+        <!-- Главное меню -->
+        <div id="mainMenu" class="screen">
+            <div class="menu-grid">
+                <button data-screen="lessonType">📚 УРОКИ</button>
+                <button data-screen="arcade">🕹️ ИГРОТЕКА</button>
+                <button data-screen="shopMenu">🏪 МАГАЗИН</button>
+                <button data-screen="achievements">🏆 НАГРАДЫ</button>
+                <button data-screen="daily">📅 ЗАДАНИЯ</button>
+                <button data-screen="reference">📖 СПРАВОЧНИК</button>
+                <button data-screen="settings">⚙️ НАСТРОЙКИ</button>
+                <button id="switchChildBtn">👤 Сменить ребёнка</button>
+                <button id="exitBtn">🚪 ВЫХОД</button>
+            </div>
+        </div>
+
+        <!-- Выбор мира (уроки) -->
+        <div id="lessonType" class="screen">
+            <h2>🌍 Выбери мир</h2>
+            <div class="menu-grid">
+                <button data-world="+">➕ Лес сложения</button>
+                <button data-world="-">➖ Пустыня вычитания</button>
+                <button data-world="*">✖️ Океан умножения</button>
+                <button data-world="/">➗ Космос деления</button>
+                <button data-world="compare">🔍 Сравнение</button>
+                <button data-section="logic">🧩 Логика</button>
+                <button data-section="marathon">🏃 Марафон</button>
+                <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+            </div>
+        </div>
+
+        <!-- Экран урока -->
+        <div id="lessonScreen" class="screen">
+            <h2 id="lessonTitle">УРОК</h2>
+            <div class="progress">
+                <span>Шаг <span id="stepCur">1</span>/<span id="stepTotal">5</span></span>
+                <span id="livesDisplay">❤️❤️❤️</span>
+            </div>
+            <div id="bossIndicator" style="display:none; font-size:2rem;">👾 БОСС 👾</div>
+            <div class="task" id="taskText">2+2</div>
+            <div id="hintArea" class="hint-text" style="display:none;"></div>
+            <input type="text" id="answerInput" placeholder="Твой ответ">
+            <div class="row2">
+                <button id="submitAnswer">✅ Ответить</button>
+                <button id="skipLesson">⏭️ Пропуск</button>
+            </div>
+            <button class="back-btn" id="quitLesson">↩️ Выйти</button>
+        </div>
+
+        <!-- Игротека -->
+        <div id="arcade" class="screen">
+            <h2>🕹️ Игротека</h2>
+            <div class="menu-grid" id="arcadeMenu">
+                <button id="showMaze">🗺️ Лабиринт</button>
+                <button id="showWord">❓ Слово</button>
+                <button id="showCheckers">⚫ Шашки</button>
+                <button id="showTicTac">❌ Крестики-нолики</button>
+                <button id="showMemory">🧠 Найди пару</button>
+                <button id="showBattleship">🚢 Морской бой</button>
+                <button id="showSudoku">🧩 Судоку 4×4</button>
+                <button id="showShootGame">🎯 Попади в цель</button>
+                <button id="showCompareFast">⚡ Сравни числа</button>
+                <button id="showFingerCount">🖐️ Счёт на пальцах</button>
+                <button id="showNumberComposition">🔢 Состав числа</button>
+                <button id="showClockGame">⏰ Который час?</button>
+                <button id="showChangeGame">💰 Сдача в магазине</button>
+                <button id="showPet">🐾 Питомцы</button>
+                <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+            </div>
+        </div>
+
+        <!-- Экран питомца -->
+        <div id="petScreen" class="screen">
+            <h2>🐾 Мой питомец</h2>
+            <div id="petDisplay"></div>
+            <button class="back-btn" data-back="arcade">↩️ Назад</button>
+        </div>
+
+        <!-- Магазин -->
+        <div id="shopMenu" class="screen">
+            <h2>🏪 Магазин</h2>
+            <div class="menu-grid">
+                <button id="shopBuyBtn">🛒 Купить</button>
+                <button id="shopInventoryBtn">📦 Инвентарь</button>
+                <button id="shopAvatarBtn">🤖 Сменить робота</button>
+                <button id="shopThemesBtn">🎨 Темы</button>
+                <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+            </div>
+        </div>
+
+        <div id="shop" class="screen">
+            <h2>🏪 Магазин</h2>
+            <p>Твои монеты: <span class="coin" id="shopCoins">0</span></p>
+            <div class="menu-grid" id="shopItemsGrid"></div>
+            <button class="back-btn" data-back="shopMenu">↩️ Назад</button>
+        </div>
+
+        <div id="avatarShop" class="screen">
+            <h2>🤖 Сменить робота</h2>
+            <p>Монеты: <span class="coin" id="avatarCoins">0</span></p>
+            <div class="avatar-shop-grid" id="avatarGrid"></div>
+            <button class="back-btn" data-back="shopMenu">↩️ Назад</button>
+        </div>
+
+        <div id="themesShop" class="screen">
+            <h2>🎨 Темы оформления</h2>
+            <p>Монеты: <span class="coin" id="themesCoins">0</span></p>
+            <div class="menu-grid" id="themesGrid"></div>
+            <button class="back-btn" data-back="shopMenu">↩️ Назад</button>
+        </div>
+
+        <div id="inventory" class="screen">
+            <h2>📦 Инвентарь</h2>
+            <div id="inventoryList"></div>
+            <button class="back-btn" data-back="shopMenu">↩️ Назад</button>
+        </div>
+
+        <!-- Достижения -->
+        <div id="achievements" class="screen">
+            <h2>🏆 Награды</h2>
+            <div id="achievementList"></div>
+            <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+        </div>
+
+        <!-- Ежедневные задания -->
+        <div id="daily" class="screen">
+            <h2>📅 Задания</h2>
+            <div id="dailyTasksList"></div>
+            <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+        </div>
+
+        <!-- Справочник -->
+        <div id="reference" class="screen">
+            <h2>📖 Справочник</h2>
+            <div class="ref-tabs">
+                <span class="ref-tab active" data-ref="tab1">➕ Сложение</span>
+                <span class="ref-tab" data-ref="tab2">➖ Вычитание</span>
+                <span class="ref-tab" data-ref="tab3">✖️ Умножение</span>
+                <span class="ref-tab" data-ref="tab4">➗ Деление</span>
+                <span class="ref-tab" data-ref="tab5">🍕 Дроби</span>
+                <span class="ref-tab" data-ref="tab6">🕰️ Время</span>
+                <span class="ref-tab" data-ref="tab7">📏 Единицы</span>
+                <span class="ref-tab" data-ref="tab8">💰 Деньги</span>
+                <span class="ref-tab" data-ref="tab9">❌ Мои ошибки</span>
+            </div>
+            <div id="refContent" class="ref-content"></div>
+            <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+        </div>
+
+        <!-- Настройки -->
+        <div id="settings" class="screen">
+            <h2>⚙️ Настройки</h2>
+            <div><span>🎵 Музыка</span> <input type="checkbox" id="musicToggle" checked></div>
+            <div><span>🌓 Тема</span> <select id="themeSelect"><option value="default">Пустынная</option><option value="ocean">Морская</option><option value="forest">Лесная</option><option value="dark">Тёмная</option></select></div>
+            <div><span>🔊 Голос</span> <input type="checkbox" id="voiceToggle" checked></div>
+            <button class="back-btn" data-back="mainMenu">↩️ Назад</button>
+        </div>
+
+        <!-- Родительский кабинет -->
+        <div id="parent" class="screen">
+            <h2>👨‍👩‍👧 Родительский кабинет</h2>
+            <div id="parentLoginArea">
+                <input type="password" id="parentPwd" placeholder="Мастер-пароль">
+                <button id="enterParentBtn">🔓 Войти</button>
+            </div>
+            <div id="parentPanel" style="display:none;">
+                <h3>👥 Дети</h3>
+                <div id="childManagement"></div>
+                <button id="addChildFromParentBtn">➕ Добавить ребёнка</button>
+                <hr>
+                <h3>📊 Полная статистика</h3>
+                <select id="parentChildSelector"></select>
+                <div id="childStatsFull"></div>
+                <hr>
+                <h3>🔒 Контроль</h3>
+                <p>💰 Заработано: <span id="pcEarned">0</span> 💸 Потрачено: <span id="pcSpent">0</span></p>
+                <p>⏱️ Лимит (мин): <input type="number" id="pcTimeLimit" style="width:80px"> <button id="pcSetLimitBtn">Установить</button></p>
+                <button id="changeMasterPwdBtn">🔐 Сменить пароль</button>
+                <button id="parentLogoutBtn">🚪 Выйти</button>
+            </div>
+            <button class="back-btn" data-back="childSelect">↩️ Назад</button>
+        </div>
+
+        <!-- Игровые экраны -->
+        <div id="gameMazeScreen" class="screen"><h2>🗺️ Лабиринт</h2><div id="mazeArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameWordScreen" class="screen"><h2>❓ Отгадай слово</h2><div id="wordArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameCheckersScreen" class="screen"><h2>⚫ Шашки</h2><div id="checkersArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameTicTacScreen" class="screen"><h2>❌ Крестики-нолики</h2><div id="ticTacArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameMemoryScreen" class="screen"><h2>🧠 Найди пару</h2><div id="memoryArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameBattleshipScreen" class="screen"><h2>🚢 Морской бой</h2><div id="battleshipArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameSudokuScreen" class="screen"><h2>🧩 Судоку 4×4</h2><div id="sudokuArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameShootScreen" class="screen"><h2>🎯 Попади в цель</h2><div id="shootArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameCompareFastScreen" class="screen"><h2>⚡ Сравни числа</h2><div id="compareFastArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameFingerScreen" class="screen"><h2>🖐️ Счёт на пальцах</h2><div id="fingerArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameCompositionScreen" class="screen"><h2>🔢 Состав числа</h2><div id="compositionArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameClockScreen" class="screen"><h2>⏰ Который час?</h2><div id="clockArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+        <div id="gameChangeScreen" class="screen"><h2>💰 Сдача в магазине</h2><div id="changeArea"></div><button class="back-btn" data-back="arcade">↩️ Назад</button></div>
+    </div>
+
+    <!-- Модальные окна (ВСЕ скрыты по умолчанию) -->
+    <div id="difficultyModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>🎲 Выбери сложность</h3>
+            <button id="diffEasy">🌱 Легко (1-10)</button>
+            <button id="diffMedium">🌿 Средне (1-50)</button>
+            <button id="diffHard">🌳 Сложно (1-100)</button>
+            <button id="cancelDifficulty">Отмена</button>
+        </div>
+    </div>
+
+    <div id="newChildModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>👶 Имя ученика</h3>
+            <input type="text" id="newChildName">
+            <input type="password" id="newChildPwd" placeholder="Пароль">
+            <button id="createChildBtn">Создать</button>
+            <button id="cancelNewChildBtn">Отмена</button>
+        </div>
+    </div>
+
+    <div id="childLoginModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>🔐 Пароль</h3>
+            <input type="password" id="childPwdInput">
+            <button id="submitChildPwdBtn">Войти</button>
+            <button id="cancelChildLoginBtn">Отмена</button>
+        </div>
+    </div>
+
+    <div id="petNameModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>🐾 Имя питомца</h3>
+            <input type="text" id="petNameInput">
+            <button id="petNameSaveBtn">Сохранить</button>
+            <button id="petNameCancelBtn">Отмена</button>
+        </div>
+    </div>
+
+    <div id="achievementDescModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3 id="achievementModalTitle">🏆</h3>
+            <p id="achievementModalText"></p>
+            <button id="closeAchievementDescBtn">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений -->
     <div id="notification" class="notification"></div>
-    
-    <!-- ВСЕ скрипты загружаются статически (полный офлайн) -->
-    
-    <!-- 1. Данные и состояние -->
+
+    <!-- ВСЕ скрипты -->
     <script src="assets/js/state.js"></script>
     <script src="assets/js/storage.js"></script>
-    
-    <!-- 2. Системные модули -->
     <script src="assets/js/notifications.js"></script>
-    
-    <!-- 3. Данные для предметов -->
     <script src="assets/js/data/math-worlds.js"></script>
     <script src="assets/js/data/russian-worlds.js"></script>
     <script src="assets/js/data/english-worlds.js"></script>
@@ -38,8 +298,6 @@
     <script src="assets/js/data/world-topics.js"></script>
     <script src="assets/js/data/vocabulary-en.js"></script>
     <script src="assets/js/data/world-facts.js"></script>
-    
-    <!-- 4. Основные модули -->
     <script src="assets/js/achievements.js"></script>
     <script src="assets/js/daily.js"></script>
     <script src="assets/js/task-generator.js"></script>
@@ -48,8 +306,6 @@
     <script src="assets/js/encyclopedia.js"></script>
     <script src="assets/js/parent-control.js"></script>
     <script src="assets/js/diplomas.js"></script>
-    
-    <!-- 5. Игры (учебные) -->
     <script src="assets/js/games/maze.js"></script>
     <script src="assets/js/games/word.js"></script>
     <script src="assets/js/games/checkers.js"></script>
@@ -63,17 +319,13 @@
     <script src="assets/js/games/number-composition.js"></script>
     <script src="assets/js/games/clock-game.js"></script>
     <script src="assets/js/games/change-game.js"></script>
-    
-    <!-- 6. Игры (с питомцем) -->
     <script src="assets/js/games/pet/basketball.js"></script>
     <script src="assets/js/games/pet/catch.js"></script>
     <script src="assets/js/games/pet/find.js"></script>
     <script src="assets/js/games/pet/racing.js"></script>
     <script src="assets/js/games/pet/arcade-game.js"></script>
     <script src="assets/js/games/pet/shooting.js"></script>
-    
-    <!-- 7. Роутер и UI (загружаются последними, так как используют всё остальное) -->
     <script src="assets/js/router.js"></script>
     <script src="assets/js/ui.js"></script>
 </body>
-</html>
+    </html>
