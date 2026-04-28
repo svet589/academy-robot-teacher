@@ -1,34 +1,16 @@
-// ==================== УВЕДОМЛЕНИЯ И ЗВУКИ ====================
-let audioCtx = null;
-
+// ==================== УВЕДОМЛЕНИЯ ====================
 function showNotification(text, isGood = true) {
-    const container = document.getElementById('notification-container');
-    if (!container) return;
-    const n = document.createElement('div');
+    const n = document.getElementById('notification');
+    if (!n) return;
     n.textContent = text;
-    n.style.cssText = `
-        background: ${isGood ? '#d4edc9' : '#ffe0b0'};
-        color: #2d4059;
-        border: 2px solid ${isGood ? '#4caf50' : '#ff9800'};
-        border-radius: 40px;
-        padding: 12px 25px;
-        margin: 5px;
-        font-weight: bold;
-        font-size: 1rem;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        display: inline-block;
-    `;
-    container.appendChild(n);
-    setTimeout(() => {
-        n.style.opacity = '0';
-        n.style.transition = 'opacity 0.3s';
-        setTimeout(() => n.remove(), 300);
-    }, 2500);
+    n.style.background = isGood ? '#d4edc9' : '#ffe0b0';
+    n.style.display = 'block';
+    setTimeout(() => n.style.display = 'none', 2500);
 }
 
+// ==================== ЗВУКИ ====================
 function playSound(type) {
-    if (!AppState.settings.soundEnabled) return;
+    if (!musicEnabled) return;
     try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -53,8 +35,9 @@ function playSound(type) {
     } catch(e) {}
 }
 
+// ==================== ГОЛОС ====================
 function speak(text) {
-    if (!AppState.settings.voiceEnabled || !window.speechSynthesis) return;
+    if (!voiceEnabled || !window.speechSynthesis) return;
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'ru';
     utter.rate = 0.9;
@@ -79,52 +62,19 @@ function showConfetti(type = 'success') {
     for (let i = 0; i < count; i++) {
         const conf = document.createElement('div');
         conf.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
-        conf.style.cssText = `
-            position: fixed;
-            left: ${Math.random() * 100}%;
-            top: -30px;
-            font-size: ${Math.random() * 20 + 15}px;
-            pointer-events: none;
-            z-index: 9999;
-            transition: all ${Math.random() * 1 + 1}s ease-out;
-            opacity: 1;
-            transform: rotate(${Math.random() * 360}deg);
-        `;
+        conf.style.position = 'fixed';
+        conf.style.left = Math.random() * 100 + '%';
+        conf.style.top = '-20px';
+        conf.style.fontSize = (Math.random() * 20 + 15) + 'px';
+        conf.style.pointerEvents = 'none';
+        conf.style.zIndex = '9999';
+        conf.style.transition = 'all 1s ease-out';
         document.body.appendChild(conf);
-        
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 100 + 50;
-        const dx = Math.cos(angle) * distance;
-        const dy = Math.sin(angle) * distance + window.innerHeight;
-        
-        setTimeout(() => {
-            conf.style.top = dy + 'px';
-            conf.style.left = (parseFloat(conf.style.left) + dx / window.innerWidth * 100) + '%';
-            conf.style.opacity = '0';
-        }, 10);
-        
-        setTimeout(() => conf.remove(), 2000);
+        setTimeout(() => { conf.style.top = '100vh'; conf.style.opacity = '0'; }, 10);
+        setTimeout(() => conf.remove(), 1100);
     }
 }
 
-// ==================== СТИЛИ ДЛЯ УВЕДОМЛЕНИЙ ====================
-const notifStyles = document.createElement('style');
-notifStyles.textContent = `
-    @keyframes slideIn {
-        0% { transform: translateY(20px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-    #notification-container {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-        z-index: 10000;
-        pointer-events: none;
-    }
-`;
-document.head.appendChild(notifStyles);
+// ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+let musicEnabled = true;
+let voiceEnabled = true;
